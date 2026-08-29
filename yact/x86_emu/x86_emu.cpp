@@ -11,10 +11,10 @@
 #include "../supp/logging.h"
 //#include <callbacks.h>
 
-typedef void* t_CbCallAtThreadExit(void* Func, void*Param);
-typedef bool t_CbRemoveCallAtThreadExit(void* Func, void*Param);
-t_CbCallAtThreadExit *CbCallAtThreadExit = 0;
-t_CbRemoveCallAtThreadExit *CbRemoveCallAtThreadExit = 0;
+typedef void* t_CbCallAtThreadExit(void (*Func)(void*), void* Param);
+typedef bool t_CbRemoveCallAtThreadExit(void (*Func)(void*), void* Param);
+t_CbCallAtThreadExit *CbCallAtThreadExit = nullptr;
+t_CbRemoveCallAtThreadExit *CbRemoveCallAtThreadExit = nullptr;
 
 
 typedef BOOL t_func0(void);

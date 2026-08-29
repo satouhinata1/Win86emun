@@ -9,23 +9,30 @@
 extern "C" {
 #endif
 
+// Export macro for supp.nt.dll
+#ifdef SUPP_EXPORTS
+#define SUPP_API __declspec(dllexport)
+#else
+#define SUPP_API __declspec(dllimport)
+#endif
+
 // Initialize logging subsystem (called during EmuInitialize)
-void InitDebugLog(void);
+SUPP_API void InitDebugLog(void);
 
 // Shutdown logging subsystem (called during process detach)
-void ShutdownDebugLog(void);
+SUPP_API void ShutdownDebugLog(void);
 
 // Write formatted debug log message
-void WriteDebugLog(const char* format, ...);
+SUPP_API void WriteDebugLog(const char* format, ...);
 
 // Log DLL load failure
-void LogDllLoadFailure(const char* dllName, DWORD errorCode);
+SUPP_API void LogDllLoadFailure(const char* dllName, DWORD errorCode);
 
 // Log emulation start
-void LogEmulationStart(DWORD entryPoint, int nParams);
+SUPP_API void LogEmulationStart(DWORD entryPoint, int nParams);
 
 // Log emulation end
-void LogEmulationEnd(DWORD returnValue);
+SUPP_API void LogEmulationEnd(DWORD returnValue);
 
 #ifdef __cplusplus
 }
