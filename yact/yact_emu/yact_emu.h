@@ -45,6 +45,12 @@ extern "C" {
         int Base;
 
         PCPU_STATE Cpu;  // CPU 状態へのポインタ
+        
+        // Added for operand resolution compatibility
+        BYTE ModRM;      // Full ModRM byte value
+        BYTE SIB;        // Full SIB byte value
+        DWORD Imm32;     // 32-bit immediate value
+        BYTE Imm8;       // 8-bit immediate value
     };
 
 
@@ -58,6 +64,7 @@ extern "C" {
     void inline FASTCALL FetchModRM(x86opcode *Op)
     {
         BYTE ModRM = FetchB(Op);
+        Op->ModRM = ModRM;  // Store full ModRM byte
         Op->Mod = ModRM >> 6;
         Op->Reg = (ModRM & 7) >> 3;
         Op->Mem = (ModRM & 7);
@@ -67,9 +74,27 @@ extern "C" {
     void inline FASTCALL FetchSIB(x86opcode *Op)
     {
         BYTE SIB = FetchB(Op);
+        Op->SIB = SIB;  // Store full SIB byte
         Op->Scale = SIB >> 6;
         Op->Index = (SIB & 7) >> 3;
         Op->Base = (SIB & 7);
+    }
+
+    // fetch 32-bit immediate
+    DWORD inline FASTCALL FetchImm32(x86opcode *Op)
+    {
+        DWORD imm = *(DWORD*)Op->CurrentPtr;
+        Op->CurrentPtr += 4;
+        Op->Imm32 = imm;  // Store for later use
+        return imm;
+    }
+
+    // fetch 8-bit immediate
+    BYTE inline FASTCALL FetchImm8(x86opcode *Op)
+    {
+        BYTE imm = FetchB(Op);
+        Op->Imm8 = imm;  // Store for later use
+        return imm;
     }
 
     // prepare to processing next command (clen all structure fields)

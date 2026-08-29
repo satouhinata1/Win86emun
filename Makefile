@@ -71,15 +71,15 @@ all: $(RELEASE_DIR)/supp.nt.dll $(RELEASE_DIR)/yact_emu.dll $(RELEASE_DIR)/x86_e
 
 # Link supp.nt.dll
 $(RELEASE_DIR)/supp.nt.dll: $(SUPP_OBJS)
-	$(CXX) $(LDFLAGS) -o $@ $^ -lwindows -lkernel32 -luser32 -ladvapi32
+	$(CXX) $(LDFLAGS) -o $@ $^ -lkernel32 -luser32 -ladvapi32
 
 # Link yact_emu.dll
 $(RELEASE_DIR)/yact_emu.dll: $(YACT_EMU_OBJS)
-	$(CXX) $(LDFLAGS) -o $@ $^ -lwindows -lkernel32
+	$(CXX) $(LDFLAGS) -o $@ $^ -lkernel32
 
 # Link x86_emu.dll (depends on supp.nt.dll)
 $(RELEASE_DIR)/x86_emu.dll: $(X86_EMU_OBJS) $(RELEASE_DIR)/supp.nt.dll
-	$(CXX) $(LDFLAGS) -o $@ $^ -lwindows -lkernel32 -luser32
+	$(CXX) $(LDFLAGS) -o $@ $^ -lkernel32 -luser32
 
 # Compile supp sources
 $(SUPP_DIR)/%.o: $(SUPP_DIR)/%.cpp
@@ -98,7 +98,7 @@ stubs: $(patsubst %,$(RELEASE_DIR)/%,$(STUB_DLLS))
 
 # Generic stub DLL build rule
 $(RELEASE_DIR)/%.86.dll: $(STUB_DLLS_DIR)/%_stub/*.cpp
-	$(CXX) $(LDFLAGS) -D$*_STUB_EXPORTS $(DEFINES) $(INCLUDES) -o $@ $^ -lwindows -lkernel32
+	$(CXX) $(LDFLAGS) -D$*_STUB_EXPORTS $(DEFINES) $(INCLUDES) -o $@ $^ -lkernel32
 
 # Clean build artifacts
 clean:

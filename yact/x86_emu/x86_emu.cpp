@@ -8,7 +8,7 @@
 #include <util.h>
 #include <stdio.h>
 #include <classes.h>
-#include "logging.h"
+#include "../supp/logging.h"
 //#include <callbacks.h>
 
 typedef void* t_CbCallAtThreadExit(void* Func, void*Param);

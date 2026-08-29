@@ -1,6 +1,13 @@
 #include "stdafx.h"
 #include "yact_emu.h"
 
+// Forward declarations from operands.cpp
+extern DWORD ReadReg(PCPU_STATE cpu, int reg_idx);
+extern void WriteReg(PCPU_STATE cpu, int reg_idx, DWORD value);
+extern DWORD ReadMem32(DWORD addr);
+extern void WriteMem32(DWORD addr, DWORD value);
+extern int ResolveOperand(x86opcode *Op, int operand_index, DWORD *out_addr, BOOL *is_memory);
+
 static bool FASTCALL Cmd00(x86opcode *Op)
 {
     return false;

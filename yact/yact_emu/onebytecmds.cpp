@@ -1,6 +1,13 @@
 #include "stdafx.h"
 #include "yact_emu.h"
 
+// Forward declarations from operands.cpp
+extern DWORD ReadReg(PCPU_STATE cpu, int reg_idx);
+extern void WriteReg(PCPU_STATE cpu, int reg_idx, DWORD value);
+extern DWORD ReadMem32(DWORD addr);
+extern void WriteMem32(DWORD addr, DWORD value);
+extern int ResolveOperand(x86opcode *Op, int operand_index, DWORD *out_addr, BOOL *is_memory);
+
 static bool FASTCALL Cmd00(x86opcode *Op)
 {
     Op->Mnemonics = "add";
@@ -301,13 +308,7 @@ static bool FASTCALL Cmd1F(x86opcode *Op) // POP DS
     return false;
 }
 
-// Removed - already defined above at line 64-69
-static bool FASTCALL Cmd20(x86opcode *Op) { return Cmd20(Op); }
-static bool FASTCALL Cmd21(x86opcode *Op) { return Cmd21(Op); }
-static bool FASTCALL Cmd22(x86opcode *Op) { return Cmd22(Op); }
-static bool FASTCALL Cmd23(x86opcode *Op) { return Cmd23(Op); }
-static bool FASTCALL Cmd24(x86opcode *Op) { return Cmd24(Op); }
-static bool FASTCALL Cmd25(x86opcode *Op) { return Cmd25(Op); }
+// Removed duplicate definitions - Cmd20-Cmd25 already defined above at lines 75-80
 
 static bool FASTCALL Cmd26(x86opcode *Op)
 {
@@ -371,13 +372,7 @@ static bool FASTCALL Cmd2F(x86opcode *Op)
     return false;
 }
 
-// Removed - already defined above at line 80-85
-static bool FASTCALL Cmd30(x86opcode *Op) { return Cmd30(Op); }
-static bool FASTCALL Cmd31(x86opcode *Op) { return Cmd31(Op); }
-static bool FASTCALL Cmd32(x86opcode *Op) { return Cmd32(Op); }
-static bool FASTCALL Cmd33(x86opcode *Op) { return Cmd33(Op); }
-static bool FASTCALL Cmd34(x86opcode *Op) { return Cmd34(Op); }
-static bool FASTCALL Cmd35(x86opcode *Op) { return Cmd35(Op); }
+// Removed duplicate definitions - Cmd30-Cmd35 already defined above at lines 91-96
 
 static bool FASTCALL Cmd36(x86opcode *Op)
 {
@@ -787,8 +782,6 @@ static bool FASTCALL Cmd83(x86opcode *Op)
 }
 
 // Removed - already defined above at line 88-89
-static bool FASTCALL Cmd84(x86opcode *Op) { return Cmd84(Op); }
-static bool FASTCALL Cmd85(x86opcode *Op) { return Cmd85(Op); }
 
 // XCHG r/m, reg (Cmd86/Cmd87) and XCHG EAX, reg (Cmd90-Cmd97)
 static bool FASTCALL Cmd86(x86opcode *Op) { FetchModRM(Op); DWORD addr; BOOL is_mem; int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem); BYTE op1 = is_mem ? *(BYTE*)addr : (BYTE)ReadReg(Op->Cpu, rm_idx); int reg_idx = ResolveOperand(Op, 1, &addr, &is_mem); BYTE op2 = (BYTE)ReadReg(Op->Cpu, reg_idx); if (is_mem) WriteMem32(addr, op2); else WriteReg(Op->Cpu, rm_idx, op2); WriteReg(Op->Cpu, reg_idx, op1); Op->Cpu->eip += 2; return false; }
@@ -823,7 +816,6 @@ static bool FASTCALL Cmd8C(x86opcode *Op)
 static bool FASTCALL Cmd8D(x86opcode *Op) { FetchModRM(Op); DWORD addr; BOOL is_mem; int reg_idx = ResolveOperand(Op, 1, &addr, &is_mem); ResolveOperand(Op, 0, &addr, &is_mem); WriteReg(Op->Cpu, reg_idx, addr); Op->Cpu->eip += 2; return false; }
 
 // MOV r/m16, Sreg (Cmd8C) and MOV Sreg, r/m16 (Cmd8E), POP r/m (Cmd8F)
-static bool FASTCALL Cmd8C(x86opcode *Op) { FetchModRM(Op); WORD seg_val; int reg = Op->Reg; switch(reg) { case 0: seg_val = Op->Cpu->es; break; case 1: seg_val = Op->Cpu->cs; break; case 2: seg_val = Op->Cpu->ss; break; case 3: seg_val = Op->Cpu->ds; break; case 4: seg_val = Op->Cpu->fs; break; case 5: seg_val = Op->Cpu->gs; break; default: seg_val = 0; break; } DWORD addr; BOOL is_mem; int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem); if (is_mem) WriteMem32(addr, seg_val); else WriteReg(Op->Cpu, rm_idx, seg_val); Op->Cpu->eip += 2; return false; }
 
 static bool FASTCALL Cmd8E(x86opcode *Op) // MOV Sreg, r/m16
 {
