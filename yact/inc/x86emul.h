@@ -96,6 +96,35 @@ static inline void UpdateFlags_Logical(PCPU_STATE cpu, DWORD res) {
     if (CalcParity(res)) cpu->eflags |= EFLAGS_PF;
 }
 
+static inline void UpdateFlags_Adc(PCPU_STATE cpu, DWORD res, DWORD op1, DWORD op2, BOOL carry_in) {
+    cpu->eflags &= ~(EFLAGS_CF | EFLAGS_PF | EFLAGS_AF | EFLAGS_ZF | EFLAGS_SF | EFLAGS_OF);
+    if (res == 0) cpu->eflags |= EFLAGS_ZF;
+    if (res & 0x80000000) cpu->eflags |= EFLAGS_SF;
+    if (CalcParity(res)) cpu->eflags |= EFLAGS_PF;
+    // CF: unsigned overflow including carry
+    if (carry_in && res < op1) cpu->eflags |= EFLAGS_CF;
+    else if (!carry_in && res < op1) cpu->eflags |= EFLAGS_CF;
+    else if (carry_in && (res == op1)) cpu->eflags |= EFLAGS_CF; // carry caused overflow
+    // More accurate CF calculation
+    if ((op1 + op2 + (carry_in ? 1 : 0)) < op1) cpu->eflags |= EFLAGS_CF;
+    // AF: auxiliary carry
+    if (((op1 & 0xF) + (op2 & 0xF) + (carry_in ? 1 : 0)) > 0xF) cpu->eflags |= EFLAGS_AF;
+    // OF: signed overflow
+    if (!((op1 ^ op2) & 0x80000000) && ((op1 ^ res) & 0x80000000)) cpu->eflags |= EFLAGS_OF;
+}
+
+static inline void UpdateFlags_Sbb(PCPU_STATE cpu, DWORD res, DWORD op1, DWORD op2, BOOL borrow_in) {
+    cpu->eflags &= ~(EFLAGS_CF | EFLAGS_PF | EFLAGS_AF | EFLAGS_ZF | EFLAGS_SF | EFLAGS_OF);
+    if ((op1 & 0xF) < (op2 & 0xF) + (borrow_in ? 1 : 0)) cpu->eflags |= EFLAGS_AF;
+    if (res == 0) cpu->eflags |= EFLAGS_ZF;
+    if (res & 0x80000000) cpu->eflags |= EFLAGS_SF;
+    if (CalcParity(res)) cpu->eflags |= EFLAGS_PF;
+    // CF: unsigned borrow including borrow-in
+    if (op1 < op2 + (borrow_in ? 1 : 0)) cpu->eflags |= EFLAGS_CF;
+    // OF: signed overflow
+    if (((op1 ^ op2) & 0x80000000) && ((op1 ^ res) & 0x80000000)) cpu->eflags |= EFLAGS_OF;
+}
+
 #endif // _CPU_STATE_DEFINED
 
 #endif // __EMUL_H

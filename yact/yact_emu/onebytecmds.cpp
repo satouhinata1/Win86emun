@@ -101,33 +101,84 @@ static bool FASTCALL Cmd0F(x86opcode *Op)
 }
 
 
-static bool FASTCALL Cmd10(x86opcode *Op)
-{
+// ADC r/m, reg (Cmd10) ～ ADC EAX, imm32 (Cmd15)
+static bool FASTCALL Cmd10(x86opcode *Op) {
+    FetchModRM(Op);
+    DWORD addr; BOOL is_mem;
+    int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem);
+    DWORD op1 = is_mem ? ReadMem32(addr) : ReadReg(Op->Cpu, rm_idx);
+    int reg_idx = ResolveOperand(Op, 1, &addr, &is_mem);
+    DWORD op2 = ReadReg(Op->Cpu, reg_idx);
+    BOOL carry_in = (Op->Cpu->eflags & EFLAGS_CF) ? TRUE : FALSE;
+    DWORD res = op1 + op2 + (carry_in ? 1 : 0);
+    if (is_mem) WriteMem32(addr, res);
+    else WriteReg(Op->Cpu, rm_idx, res);
+    UpdateFlags_Adc(Op->Cpu, res, op1, op2, carry_in);
+    Op->Cpu->eip += 2;
     return false;
 }
-
-static bool FASTCALL Cmd11(x86opcode *Op)
-{
+static bool FASTCALL Cmd11(x86opcode *Op) {
+    FetchModRM(Op);
+    DWORD addr; BOOL is_mem;
+    int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem);
+    DWORD op1 = is_mem ? ReadMem32(addr) : ReadReg(Op->Cpu, rm_idx);
+    int reg_idx = ResolveOperand(Op, 1, &addr, &is_mem);
+    DWORD op2 = ReadReg(Op->Cpu, reg_idx);
+    BOOL carry_in = (Op->Cpu->eflags & EFLAGS_CF) ? TRUE : FALSE;
+    DWORD res = op1 + op2 + (carry_in ? 1 : 0);
+    if (is_mem) WriteMem32(addr, res);
+    else WriteReg(Op->Cpu, rm_idx, res);
+    UpdateFlags_Adc(Op->Cpu, res, op1, op2, carry_in);
+    Op->Cpu->eip += 2;
     return false;
 }
-
-static bool FASTCALL Cmd12(x86opcode *Op)
-{
+static bool FASTCALL Cmd12(x86opcode *Op) {
+    FetchModRM(Op);
+    DWORD addr; BOOL is_mem;
+    int reg_idx = ResolveOperand(Op, 1, &addr, &is_mem);
+    DWORD op2 = ReadReg(Op->Cpu, reg_idx);
+    int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem);
+    DWORD op1 = is_mem ? ReadMem32(addr) : ReadReg(Op->Cpu, rm_idx);
+    BOOL carry_in = (Op->Cpu->eflags & EFLAGS_CF) ? TRUE : FALSE;
+    DWORD res = op1 + op2 + (carry_in ? 1 : 0);
+    if (is_mem) WriteMem32(addr, res);
+    else WriteReg(Op->Cpu, rm_idx, res);
+    UpdateFlags_Adc(Op->Cpu, res, op1, op2, carry_in);
+    Op->Cpu->eip += 2;
     return false;
 }
-
-static bool FASTCALL Cmd13(x86opcode *Op)
-{
+static bool FASTCALL Cmd13(x86opcode *Op) {
+    FetchModRM(Op);
+    DWORD addr; BOOL is_mem;
+    int reg_idx = ResolveOperand(Op, 1, &addr, &is_mem);
+    DWORD op2 = ReadReg(Op->Cpu, reg_idx);
+    int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem);
+    DWORD op1 = is_mem ? ReadMem32(addr) : ReadReg(Op->Cpu, rm_idx);
+    BOOL carry_in = (Op->Cpu->eflags & EFLAGS_CF) ? TRUE : FALSE;
+    DWORD res = op1 + op2 + (carry_in ? 1 : 0);
+    WriteReg(Op->Cpu, reg_idx, res);
+    UpdateFlags_Adc(Op->Cpu, res, op1, op2, carry_in);
+    Op->Cpu->eip += 2;
     return false;
 }
-
-static bool FASTCALL Cmd14(x86opcode *Op)
-{
+static bool FASTCALL Cmd14(x86opcode *Op) {
+    DWORD op1 = Op->Cpu->eax & 0xFF;
+    DWORD op2 = Op->Imm8 & 0xFF;
+    BOOL carry_in = (Op->Cpu->eflags & EFLAGS_CF) ? TRUE : FALSE;
+    DWORD res = op1 + op2 + (carry_in ? 1 : 0);
+    Op->Cpu->eax = (Op->Cpu->eax & ~0xFF) | (res & 0xFF);
+    UpdateFlags_Adc(Op->Cpu, res & 0xFF, op1, op2, carry_in);
+    Op->Cpu->eip += 2;
     return false;
 }
-
-static bool FASTCALL Cmd15(x86opcode *Op)
-{
+static bool FASTCALL Cmd15(x86opcode *Op) {
+    DWORD op1 = Op->Cpu->eax;
+    DWORD op2 = Op->Imm32;
+    BOOL carry_in = (Op->Cpu->eflags & EFLAGS_CF) ? TRUE : FALSE;
+    DWORD res = op1 + op2 + (carry_in ? 1 : 0);
+    Op->Cpu->eax = res;
+    UpdateFlags_Adc(Op->Cpu, res, op1, op2, carry_in);
+    Op->Cpu->eip += 5;
     return false;
 }
 
@@ -141,33 +192,84 @@ static bool FASTCALL Cmd17(x86opcode *Op)
     return false;
 }
 
-static bool FASTCALL Cmd18(x86opcode *Op)
-{
+// SBB r/m, reg (Cmd18) ～ SBB EAX, imm32 (Cmd1D)
+static bool FASTCALL Cmd18(x86opcode *Op) {
+    FetchModRM(Op);
+    DWORD addr; BOOL is_mem;
+    int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem);
+    DWORD op1 = is_mem ? ReadMem32(addr) : ReadReg(Op->Cpu, rm_idx);
+    int reg_idx = ResolveOperand(Op, 1, &addr, &is_mem);
+    DWORD op2 = ReadReg(Op->Cpu, reg_idx);
+    BOOL borrow_in = (Op->Cpu->eflags & EFLAGS_CF) ? TRUE : FALSE;
+    DWORD res = op1 - op2 - (borrow_in ? 1 : 0);
+    if (is_mem) WriteMem32(addr, res);
+    else WriteReg(Op->Cpu, rm_idx, res);
+    UpdateFlags_Sbb(Op->Cpu, res, op1, op2, borrow_in);
+    Op->Cpu->eip += 2;
     return false;
 }
-
-static bool FASTCALL Cmd19(x86opcode *Op)
-{
+static bool FASTCALL Cmd19(x86opcode *Op) {
+    FetchModRM(Op);
+    DWORD addr; BOOL is_mem;
+    int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem);
+    DWORD op1 = is_mem ? ReadMem32(addr) : ReadReg(Op->Cpu, rm_idx);
+    int reg_idx = ResolveOperand(Op, 1, &addr, &is_mem);
+    DWORD op2 = ReadReg(Op->Cpu, reg_idx);
+    BOOL borrow_in = (Op->Cpu->eflags & EFLAGS_CF) ? TRUE : FALSE;
+    DWORD res = op1 - op2 - (borrow_in ? 1 : 0);
+    if (is_mem) WriteMem32(addr, res);
+    else WriteReg(Op->Cpu, rm_idx, res);
+    UpdateFlags_Sbb(Op->Cpu, res, op1, op2, borrow_in);
+    Op->Cpu->eip += 2;
     return false;
 }
-
-static bool FASTCALL Cmd1A(x86opcode *Op)
-{
+static bool FASTCALL Cmd1A(x86opcode *Op) {
+    FetchModRM(Op);
+    DWORD addr; BOOL is_mem;
+    int reg_idx = ResolveOperand(Op, 1, &addr, &is_mem);
+    DWORD op2 = ReadReg(Op->Cpu, reg_idx);
+    int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem);
+    DWORD op1 = is_mem ? ReadMem32(addr) : ReadReg(Op->Cpu, rm_idx);
+    BOOL borrow_in = (Op->Cpu->eflags & EFLAGS_CF) ? TRUE : FALSE;
+    DWORD res = op1 - op2 - (borrow_in ? 1 : 0);
+    if (is_mem) WriteMem32(addr, res);
+    else WriteReg(Op->Cpu, rm_idx, res);
+    UpdateFlags_Sbb(Op->Cpu, res, op1, op2, borrow_in);
+    Op->Cpu->eip += 2;
     return false;
 }
-
-static bool FASTCALL Cmd1B(x86opcode *Op)
-{
+static bool FASTCALL Cmd1B(x86opcode *Op) {
+    FetchModRM(Op);
+    DWORD addr; BOOL is_mem;
+    int reg_idx = ResolveOperand(Op, 1, &addr, &is_mem);
+    DWORD op2 = ReadReg(Op->Cpu, reg_idx);
+    int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem);
+    DWORD op1 = is_mem ? ReadMem32(addr) : ReadReg(Op->Cpu, rm_idx);
+    BOOL borrow_in = (Op->Cpu->eflags & EFLAGS_CF) ? TRUE : FALSE;
+    DWORD res = op1 - op2 - (borrow_in ? 1 : 0);
+    WriteReg(Op->Cpu, reg_idx, res);
+    UpdateFlags_Sbb(Op->Cpu, res, op1, op2, borrow_in);
+    Op->Cpu->eip += 2;
     return false;
 }
-
-static bool FASTCALL Cmd1C(x86opcode *Op)
-{
+static bool FASTCALL Cmd1C(x86opcode *Op) {
+    DWORD op1 = Op->Cpu->eax & 0xFF;
+    DWORD op2 = Op->Imm8 & 0xFF;
+    BOOL borrow_in = (Op->Cpu->eflags & EFLAGS_CF) ? TRUE : FALSE;
+    DWORD res = op1 - op2 - (borrow_in ? 1 : 0);
+    Op->Cpu->eax = (Op->Cpu->eax & ~0xFF) | (res & 0xFF);
+    UpdateFlags_Sbb(Op->Cpu, res & 0xFF, op1, op2, borrow_in);
+    Op->Cpu->eip += 2;
     return false;
 }
-
-static bool FASTCALL Cmd1D(x86opcode *Op)
-{
+static bool FASTCALL Cmd1D(x86opcode *Op) {
+    DWORD op1 = Op->Cpu->eax;
+    DWORD op2 = Op->Imm32;
+    BOOL borrow_in = (Op->Cpu->eflags & EFLAGS_CF) ? TRUE : FALSE;
+    DWORD res = op1 - op2 - (borrow_in ? 1 : 0);
+    Op->Cpu->eax = res;
+    UpdateFlags_Sbb(Op->Cpu, res, op1, op2, borrow_in);
+    Op->Cpu->eip += 5;
     return false;
 }
 
@@ -808,13 +910,108 @@ static bool FASTCALL CmdBF(x86opcode *Op)
     return false;
 }
 
-static bool FASTCALL CmdC0(x86opcode *Op)
-{
+// SHL/SHR/ROL/ROR etc r/m8, imm8 (CmdC0)
+static bool FASTCALL CmdC0(x86opcode *Op) {
+    FetchModRM(Op);
+    BYTE modrm = Op->ModRM;
+    BYTE reg = (modrm >> 3) & 0x07;
+    BYTE rm = modrm & 0x07;
+    BYTE mod = (modrm >> 6) & 0x03;
+    DWORD addr; BOOL is_mem;
+    int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem);
+    BYTE val = is_mem ? (BYTE)ReadMem32(addr) : (BYTE)ReadReg(Op->Cpu, rm_idx);
+    BYTE count = Op->Imm8 & 0x1F;
+    BYTE res = 0;
+    if (count == 0) { Op->Cpu->eip += 3; return false; }
+    
+    switch (reg) {
+        case 0: // SHL
+            res = val << (count & 7);
+            if (count == 1 && ((val >> 7) & 1)) Op->Cpu->eflags |= EFLAGS_OF; else Op->Cpu->eflags &= ~EFLAGS_OF;
+            if (count > 0 && ((val >> (8 - count)) & 1)) Op->Cpu->eflags |= EFLAGS_CF; else Op->Cpu->eflags &= ~EFLAGS_CF;
+            break;
+        case 1: // SHR
+            res = val >> (count & 7);
+            if (count == 1 && (val & 0x80)) Op->Cpu->eflags |= EFLAGS_OF; else Op->Cpu->eflags &= ~EFLAGS_OF;
+            if (count > 0 && ((val >> (count - 1)) & 1)) Op->Cpu->eflags |= EFLAGS_CF; else Op->Cpu->eflags &= ~EFLAGS_CF;
+            break;
+        case 2: // RCL (simplified)
+        case 3: // RCR (simplified)
+        case 4: // ROL
+            res = (val << (count & 7)) | (val >> (8 - (count & 7)));
+            if (count > 0) Op->Cpu->eflags |= EFLAGS_CF; else Op->Cpu->eflags &= ~EFLAGS_CF;
+            break;
+        case 5: // ROR
+            res = (val >> (count & 7)) | (val << (8 - (count & 7)));
+            if (count > 0) Op->Cpu->eflags |= EFLAGS_CF; else Op->Cpu->eflags &= ~EFLAGS_CF;
+            break;
+        case 6: // SAR
+            res = ((signed char)val) >> (count & 7);
+            if (count > 0 && ((val >> (count - 1)) & 1)) Op->Cpu->eflags |= EFLAGS_CF; else Op->Cpu->eflags &= ~EFLAGS_CF;
+            break;
+        case 7: // SAL (same as SHL)
+            res = val << (count & 7);
+            if (count == 1 && ((val >> 7) & 1)) Op->Cpu->eflags |= EFLAGS_OF; else Op->Cpu->eflags &= ~EFLAGS_OF;
+            if (count > 0 && ((val >> (8 - count)) & 1)) Op->Cpu->eflags |= EFLAGS_CF; else Op->Cpu->eflags &= ~EFLAGS_CF;
+            break;
+    }
+    if (res == 0) Op->Cpu->eflags |= EFLAGS_ZF; else Op->Cpu->eflags &= ~EFLAGS_ZF;
+    if (res & 0x80) Op->Cpu->eflags |= EFLAGS_SF; else Op->Cpu->eflags &= ~EFLAGS_SF;
+    if (CalcParity(res)) Op->Cpu->eflags |= EFLAGS_PF; else Op->Cpu->eflags &= ~EFLAGS_PF;
+    if (is_mem) WriteMem32(addr, res); else WriteReg(Op->Cpu, rm_idx, res);
+    Op->Cpu->eip += 3;
     return false;
 }
 
-static bool FASTCALL CmdC1(x86opcode *Op)
-{
+// SHL/SHR/ROL/ROR etc r/m32, imm8 (CmdC1)
+static bool FASTCALL CmdC1(x86opcode *Op) {
+    FetchModRM(Op);
+    BYTE modrm = Op->ModRM;
+    BYTE reg = (modrm >> 3) & 0x07;
+    DWORD addr; BOOL is_mem;
+    int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem);
+    DWORD val = is_mem ? ReadMem32(addr) : ReadReg(Op->Cpu, rm_idx);
+    BYTE count = Op->Imm8 & 0x1F;
+    DWORD res = 0;
+    if (count == 0) { Op->Cpu->eip += 3; return false; }
+    
+    switch (reg) {
+        case 0: // SHL
+            res = val << count;
+            if (count == 1 && ((val >> 31) & 1)) Op->Cpu->eflags |= EFLAGS_OF; else Op->Cpu->eflags &= ~EFLAGS_OF;
+            if (count > 0 && ((val >> (32 - count)) & 1)) Op->Cpu->eflags |= EFLAGS_CF; else Op->Cpu->eflags &= ~EFLAGS_CF;
+            break;
+        case 1: // SHR
+            res = val >> count;
+            if (count == 1 && (val & 0x80000000)) Op->Cpu->eflags |= EFLAGS_OF; else Op->Cpu->eflags &= ~EFLAGS_OF;
+            if (count > 0 && ((val >> (count - 1)) & 1)) Op->Cpu->eflags |= EFLAGS_CF; else Op->Cpu->eflags &= ~EFLAGS_CF;
+            break;
+        case 4: // ROL
+            res = (val << count) | (val >> (32 - count));
+            if (count > 0) Op->Cpu->eflags |= EFLAGS_CF; else Op->Cpu->eflags &= ~EFLAGS_CF;
+            break;
+        case 5: // ROR
+            res = (val >> count) | (val << (32 - count));
+            if (count > 0) Op->Cpu->eflags |= EFLAGS_CF; else Op->Cpu->eflags &= ~EFLAGS_CF;
+            break;
+        case 6: // SAR
+            res = ((signed long)val) >> count;
+            if (count > 0 && ((val >> (count - 1)) & 1)) Op->Cpu->eflags |= EFLAGS_CF; else Op->Cpu->eflags &= ~EFLAGS_CF;
+            break;
+        case 7: // SAL (same as SHL)
+            res = val << count;
+            if (count == 1 && ((val >> 31) & 1)) Op->Cpu->eflags |= EFLAGS_OF; else Op->Cpu->eflags &= ~EFLAGS_OF;
+            if (count > 0 && ((val >> (32 - count)) & 1)) Op->Cpu->eflags |= EFLAGS_CF; else Op->Cpu->eflags &= ~EFLAGS_CF;
+            break;
+        default:
+            res = val;
+            break;
+    }
+    if (res == 0) Op->Cpu->eflags |= EFLAGS_ZF; else Op->Cpu->eflags &= ~EFLAGS_ZF;
+    if (res & 0x80000000) Op->Cpu->eflags |= EFLAGS_SF; else Op->Cpu->eflags &= ~EFLAGS_SF;
+    if (CalcParity(res)) Op->Cpu->eflags |= EFLAGS_PF; else Op->Cpu->eflags &= ~EFLAGS_PF;
+    if (is_mem) WriteMem32(addr, res); else WriteReg(Op->Cpu, rm_idx, res);
+    Op->Cpu->eip += 3;
     return false;
 }
 
@@ -892,23 +1089,154 @@ static bool FASTCALL CmdCF(x86opcode *Op)
     return false;
 }
 
-static bool FASTCALL CmdD0(x86opcode *Op)
-{
+// D0-D3: Shift/Rotate by 1 or by CL
+static bool FASTCALL CmdD0(x86opcode *Op) {
+    FetchModRM(Op);
+    BYTE modrm = Op->ModRM;
+    BYTE reg = (modrm >> 3) & 0x07;
+    DWORD addr; BOOL is_mem;
+    int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem);
+    BYTE val = is_mem ? (BYTE)ReadMem32(addr) : (BYTE)ReadReg(Op->Cpu, rm_idx);
+    BYTE count = 1;
+    BYTE res = 0;
+    
+    switch (reg) {
+        case 0: // SHL
+            res = val << 1;
+            if ((val >> 7) & 1) Op->Cpu->eflags |= EFLAGS_CF; else Op->Cpu->eflags &= ~EFLAGS_CF;
+            if ((val ^ res) & 0x80) Op->Cpu->eflags |= EFLAGS_OF; else Op->Cpu->eflags &= ~EFLAGS_OF;
+            break;
+        case 1: // SHR
+            res = val >> 1;
+            if (val & 1) Op->Cpu->eflags |= EFLAGS_CF; else Op->Cpu->eflags &= ~EFLAGS_CF;
+            if (val & 0x80) Op->Cpu->eflags |= EFLAGS_OF; else Op->Cpu->eflags &= ~EFLAGS_OF;
+            break;
+        case 4: // ROL
+            res = (val << 1) | (val >> 7);
+            if (val & 0x80) Op->Cpu->eflags |= EFLAGS_CF; else Op->Cpu->eflags &= ~EFLAGS_CF;
+            if ((val ^ res) & 0x80) Op->Cpu->eflags |= EFLAGS_OF; else Op->Cpu->eflags &= ~EFLAGS_OF;
+            break;
+        case 5: // ROR
+            res = (val >> 1) | (val << 7);
+            if (val & 1) Op->Cpu->eflags |= EFLAGS_CF; else Op->Cpu->eflags &= ~EFLAGS_CF;
+            if ((val >> 7) ^ (val >> 6)) Op->Cpu->eflags |= EFLAGS_OF; else Op->Cpu->eflags &= ~EFLAGS_OF;
+            break;
+        case 6: // SAR
+            res = ((signed char)val) >> 1;
+            if (val & 1) Op->Cpu->eflags |= EFLAGS_CF; else Op->Cpu->eflags &= ~EFLAGS_CF;
+            Op->Cpu->eflags &= ~EFLAGS_OF;
+            break;
+        default:
+            res = val;
+            break;
+    }
+    if (res == 0) Op->Cpu->eflags |= EFLAGS_ZF; else Op->Cpu->eflags &= ~EFLAGS_ZF;
+    if (res & 0x80) Op->Cpu->eflags |= EFLAGS_SF; else Op->Cpu->eflags &= ~EFLAGS_SF;
+    if (CalcParity(res)) Op->Cpu->eflags |= EFLAGS_PF; else Op->Cpu->eflags &= ~EFLAGS_PF;
+    if (is_mem) WriteMem32(addr, res); else WriteReg(Op->Cpu, rm_idx, res);
+    Op->Cpu->eip += 2;
     return false;
 }
 
-static bool FASTCALL CmdD1(x86opcode *Op)
-{
+static bool FASTCALL CmdD1(x86opcode *Op) {
+    FetchModRM(Op);
+    BYTE modrm = Op->ModRM;
+    BYTE reg = (modrm >> 3) & 0x07;
+    DWORD addr; BOOL is_mem;
+    int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem);
+    DWORD val = is_mem ? ReadMem32(addr) : ReadReg(Op->Cpu, rm_idx);
+    BYTE count = 1;
+    DWORD res = 0;
+    
+    switch (reg) {
+        case 0: // SHL
+            res = val << 1;
+            if ((val >> 31) & 1) Op->Cpu->eflags |= EFLAGS_CF; else Op->Cpu->eflags &= ~EFLAGS_CF;
+            if ((val ^ res) & 0x80000000) Op->Cpu->eflags |= EFLAGS_OF; else Op->Cpu->eflags &= ~EFLAGS_OF;
+            break;
+        case 1: // SHR
+            res = val >> 1;
+            if (val & 1) Op->Cpu->eflags |= EFLAGS_CF; else Op->Cpu->eflags &= ~EFLAGS_CF;
+            if (val & 0x80000000) Op->Cpu->eflags |= EFLAGS_OF; else Op->Cpu->eflags &= ~EFLAGS_OF;
+            break;
+        case 4: // ROL
+            res = (val << 1) | (val >> 31);
+            if ((val >> 31) & 1) Op->Cpu->eflags |= EFLAGS_CF; else Op->Cpu->eflags &= ~EFLAGS_CF;
+            if ((val ^ res) & 0x80000000) Op->Cpu->eflags |= EFLAGS_OF; else Op->Cpu->eflags &= ~EFLAGS_OF;
+            break;
+        case 5: // ROR
+            res = (val >> 1) | (val << 31);
+            if (val & 1) Op->Cpu->eflags |= EFLAGS_CF; else Op->Cpu->eflags &= ~EFLAGS_CF;
+            if ((val >> 31) ^ ((val >> 30) & 1)) Op->Cpu->eflags |= EFLAGS_OF; else Op->Cpu->eflags &= ~EFLAGS_OF;
+            break;
+        case 6: // SAR
+            res = ((signed long)val) >> 1;
+            if (val & 1) Op->Cpu->eflags |= EFLAGS_CF; else Op->Cpu->eflags &= ~EFLAGS_CF;
+            Op->Cpu->eflags &= ~EFLAGS_OF;
+            break;
+        default:
+            res = val;
+            break;
+    }
+    if (res == 0) Op->Cpu->eflags |= EFLAGS_ZF; else Op->Cpu->eflags &= ~EFLAGS_ZF;
+    if (res & 0x80000000) Op->Cpu->eflags |= EFLAGS_SF; else Op->Cpu->eflags &= ~EFLAGS_SF;
+    if (CalcParity(res)) Op->Cpu->eflags |= EFLAGS_PF; else Op->Cpu->eflags &= ~EFLAGS_PF;
+    if (is_mem) WriteMem32(addr, res); else WriteReg(Op->Cpu, rm_idx, res);
+    Op->Cpu->eip += 2;
     return false;
 }
 
-static bool FASTCALL CmdD2(x86opcode *Op)
-{
+static bool FASTCALL CmdD2(x86opcode *Op) {
+    FetchModRM(Op);
+    BYTE modrm = Op->ModRM;
+    BYTE reg = (modrm >> 3) & 0x07;
+    DWORD addr; BOOL is_mem;
+    int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem);
+    BYTE val = is_mem ? (BYTE)ReadMem32(addr) : (BYTE)ReadReg(Op->Cpu, rm_idx);
+    BYTE count = Op->Cpu->ecx & 0x1F;
+    BYTE res = 0;
+    if (count == 0) { Op->Cpu->eip += 2; return false; }
+    
+    switch (reg) {
+        case 0: res = val << count; break;
+        case 1: res = val >> count; break;
+        case 4: res = (val << count) | (val >> (8 - count)); break;
+        case 5: res = (val >> count) | (val << (8 - count)); break;
+        case 6: res = ((signed char)val) >> count; break;
+        default: res = val; break;
+    }
+    if (res == 0) Op->Cpu->eflags |= EFLAGS_ZF; else Op->Cpu->eflags &= ~EFLAGS_ZF;
+    if (res & 0x80) Op->Cpu->eflags |= EFLAGS_SF; else Op->Cpu->eflags &= ~EFLAGS_SF;
+    if (CalcParity(res)) Op->Cpu->eflags |= EFLAGS_PF; else Op->Cpu->eflags &= ~EFLAGS_PF;
+    if (is_mem) WriteMem32(addr, res); else WriteReg(Op->Cpu, rm_idx, res);
+    Op->Cpu->eip += 2;
     return false;
 }
 
-static bool FASTCALL CmdD3(x86opcode *Op)
-{
+static bool FASTCALL CmdD3(x86opcode *Op) {
+    FetchModRM(Op);
+    BYTE modrm = Op->ModRM;
+    BYTE reg = (modrm >> 3) & 0x07;
+    DWORD addr; BOOL is_mem;
+    int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem);
+    DWORD val = is_mem ? ReadMem32(addr) : ReadReg(Op->Cpu, rm_idx);
+    BYTE count = Op->Cpu->ecx & 0x1F;
+    DWORD res = 0;
+    if (count == 0) { Op->Cpu->eip += 2; return false; }
+    
+    switch (reg) {
+        case 0: res = val << count; break;
+        case 1: res = val >> count; break;
+        case 4: res = (val << count) | (val >> (32 - count)); break;
+        case 5: res = (val >> count) | (val << (32 - count)); break;
+        case 6: res = ((signed long)val) >> count; break;
+        default: res = val; break;
+    }
+    if (res == 0) Op->Cpu->eflags |= EFLAGS_ZF; else Op->Cpu->eflags &= ~EFLAGS_ZF;
+    if (res & 0x80000000) Op->Cpu->eflags |= EFLAGS_SF; else Op->Cpu->eflags &= ~EFLAGS_SF;
+    if (CalcParity(res)) Op->Cpu->eflags |= EFLAGS_PF; else Op->Cpu->eflags &= ~EFLAGS_PF;
+    if (is_mem) WriteMem32(addr, res); else WriteReg(Op->Cpu, rm_idx, res);
+    Op->Cpu->eip += 2;
     return false;
 }
 
@@ -1092,13 +1420,119 @@ static bool FASTCALL CmdF5(x86opcode *Op)
     return false;
 }
 
-static bool FASTCALL CmdF6(x86opcode *Op)
-{
+// F6/F7: TEST, NOT, NEG, MUL, IMUL, DIV, IDIV (group 3)
+static bool FASTCALL CmdF6(x86opcode *Op) {
+    FetchModRM(Op);
+    BYTE modrm = Op->ModRM;
+    BYTE reg = (modrm >> 3) & 0x07;
+    DWORD addr; BOOL is_mem;
+    int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem);
+    BYTE val = is_mem ? (BYTE)ReadMem32(addr) : (BYTE)ReadReg(Op->Cpu, rm_idx);
+    
+    switch (reg) {
+        case 0: // TEST r/m8, imm8
+        case 1: // TEST r/m8, imm8 (unused)
+            {
+                BYTE imm = Op->Imm8;
+                BYTE res = val & imm;
+                UpdateFlags_Logical(Op->Cpu, res);
+                Op->Cpu->eip += 3;
+            }
+            break;
+        case 2: // NOT r/m8
+            val = ~val;
+            if (is_mem) WriteMem32(addr, val); else WriteReg(Op->Cpu, rm_idx, val);
+            Op->Cpu->eip += 2;
+            break;
+        case 3: // NEG r/m8
+            {
+                BYTE res = -val;
+                Op->Cpu->eflags &= ~(EFLAGS_CF | EFLAGS_OF | EFLAGS_SF | EFLAGS_ZF | EFLAGS_AF | EFLAGS_PF);
+                if (res == 0) Op->Cpu->eflags |= EFLAGS_ZF;
+                if (res & 0x80) Op->Cpu->eflags |= EFLAGS_SF;
+                if (CalcParity(res)) Op->Cpu->eflags |= EFLAGS_PF;
+                if (val != 0) Op->Cpu->eflags |= EFLAGS_CF;
+                if ((val ^ res) & 0x80) Op->Cpu->eflags |= EFLAGS_OF;
+                if ((val & 0xF) + (res & 0xF) > 0xF) Op->Cpu->eflags |= EFLAGS_AF;
+                if (is_mem) WriteMem32(addr, res); else WriteReg(Op->Cpu, rm_idx, res);
+            }
+            Op->Cpu->eip += 2;
+            break;
+        case 4: // MUL AL, r/m8
+            {
+                WORD res = (WORD)Op->Cpu->eax & 0xFF * val;
+                Op->Cpu->eax = (Op->Cpu->eax & ~0xFFFF) | res;
+                Op->Cpu->eflags &= ~(EFLAGS_CF | EFLAGS_OF);
+                if (res > 0xFF) { Op->Cpu->eflags |= EFLAGS_CF; Op->Cpu->eflags |= EFLAGS_OF; }
+            }
+            Op->Cpu->eip += 2;
+            break;
+        case 5: // IMUL AL, r/m8 (simplified)
+        case 6: // DIV AX, r/m8
+        case 7: // IDIV AX, r/m8
+        default:
+            Op->Cpu->eip += 2;
+            break;
+    }
     return false;
 }
 
-static bool FASTCALL CmdF7(x86opcode *Op)
-{
+static bool FASTCALL CmdF7(x86opcode *Op) {
+    FetchModRM(Op);
+    BYTE modrm = Op->ModRM;
+    BYTE reg = (modrm >> 3) & 0x07;
+    DWORD addr; BOOL is_mem;
+    int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem);
+    DWORD val = is_mem ? ReadMem32(addr) : ReadReg(Op->Cpu, rm_idx);
+    
+    switch (reg) {
+        case 0: // TEST r/m32, imm32
+        case 1: // TEST r/m32, imm32 (unused)
+            {
+                DWORD imm = Op->Imm32;
+                DWORD res = val & imm;
+                UpdateFlags_Logical(Op->Cpu, res);
+                Op->Cpu->eip += 6;
+            }
+            break;
+        case 2: // NOT r/m32
+            val = ~val;
+            if (is_mem) WriteMem32(addr, val); else WriteReg(Op->Cpu, rm_idx, val);
+            Op->Cpu->eip += 2;
+            break;
+        case 3: // NEG r/m32
+            {
+                DWORD res = -val;
+                Op->Cpu->eflags &= ~(EFLAGS_CF | EFLAGS_OF | EFLAGS_SF | EFLAGS_ZF | EFLAGS_AF | EFLAGS_PF);
+                if (res == 0) Op->Cpu->eflags |= EFLAGS_ZF;
+                if (res & 0x80000000) Op->Cpu->eflags |= EFLAGS_SF;
+                if (CalcParity(res)) Op->Cpu->eflags |= EFLAGS_PF;
+                if (val != 0) Op->Cpu->eflags |= EFLAGS_CF;
+                if ((val ^ res) & 0x80000000) Op->Cpu->eflags |= EFLAGS_OF;
+                if ((val & 0xF) + (res & 0xF) > 0xF) Op->Cpu->eflags |= EFLAGS_AF;
+                if (is_mem) WriteMem32(addr, res); else WriteReg(Op->Cpu, rm_idx, res);
+            }
+            Op->Cpu->eip += 2;
+            break;
+        case 4: // MUL EAX, r/m32
+            {
+                DWORD op = Op->Cpu->eax;
+                DWORD lo = op * val;
+                DWORD hi = (DWORD)(((unsigned long long)op * val) >> 32);
+                Op->Cpu->eax = lo;
+                Op->Cpu->edx = hi;
+                Op->Cpu->eflags &= ~(EFLAGS_CF | EFLAGS_OF);
+                if (hi != 0) { Op->Cpu->eflags |= EFLAGS_CF; Op->Cpu->eflags |= EFLAGS_OF; }
+            }
+            Op->Cpu->eip += 2;
+            break;
+        case 5: // IMUL EAX, r/m32 (simplified)
+        case 6: // DIV EDX:EAX, r/m32
+        case 7: // IDIV EDX:EAX, r/m32
+        default:
+            Op->Cpu->eip += 2;
+            break;
+    }
     return false;
 }
 
