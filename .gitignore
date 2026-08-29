@@ -77,3 +77,4 @@ wheels/
 *.plist
 *.dSYM/
 ```.next/
+.next/
