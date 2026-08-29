@@ -48,15 +48,19 @@ static bool FASTCALL Cmd05(x86opcode *Op)
     return false;
 }
 
-static bool FASTCALL Cmd06(x86opcode *Op)
+static bool FASTCALL Cmd06(x86opcode *Op) // PUSH ES
 {
-    Op->Mnemonics = "push";
+    Op->Cpu->esp -= 4;
+    WriteMem32(Op->Cpu->esp, (DWORD)Op->Cpu->es);
+    Op->Cpu->eip += 1;
     return false;
 }
 
-static bool FASTCALL Cmd07(x86opcode *Op)
+static bool FASTCALL Cmd07(x86opcode *Op) // POP ES
 {
-    Op->Mnemonics = "push";
+    Op->Cpu->es = (WORD)ReadMem32(Op->Cpu->esp);
+    Op->Cpu->esp += 4;
+    Op->Cpu->eip += 1;
     return false;
 }
 
@@ -88,9 +92,11 @@ static bool FASTCALL Cmd35(x86opcode *Op) { DWORD res = Op->Cpu->eax ^ Op->Imm32
 static bool FASTCALL Cmd84(x86opcode *Op) { FetchModRM(Op); DWORD addr; BOOL is_mem; int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem); DWORD op1 = is_mem ? ReadMem32(addr) : ReadReg(Op->Cpu, rm_idx); int reg_idx = ResolveOperand(Op, 1, &addr, &is_mem); DWORD op2 = ReadReg(Op->Cpu, reg_idx); DWORD res = op1 & op2; UpdateFlags_Logical(Op->Cpu, res); Op->Cpu->eip += 2; return false; }
 static bool FASTCALL Cmd85(x86opcode *Op) { FetchModRM(Op); DWORD addr; BOOL is_mem; int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem); DWORD op1 = is_mem ? ReadMem32(addr) : ReadReg(Op->Cpu, rm_idx); int reg_idx = ResolveOperand(Op, 1, &addr, &is_mem); DWORD op2 = ReadReg(Op->Cpu, reg_idx); DWORD res = op1 & op2; UpdateFlags_Logical(Op->Cpu, res); Op->Cpu->eip += 2; return false; }
 
-static bool FASTCALL Cmd0E(x86opcode *Op)
+static bool FASTCALL Cmd0E(x86opcode *Op) // PUSH CS
 {
-    Op->Mnemonics = "push";
+    Op->Cpu->esp -= 4;
+    WriteMem32(Op->Cpu->esp, (DWORD)Op->Cpu->cs);
+    Op->Cpu->eip += 1;
     return false;
 }
 
@@ -182,13 +188,19 @@ static bool FASTCALL Cmd15(x86opcode *Op) {
     return false;
 }
 
-static bool FASTCALL Cmd16(x86opcode *Op)
+static bool FASTCALL Cmd16(x86opcode *Op) // PUSH SS
 {
+    Op->Cpu->esp -= 4;
+    WriteMem32(Op->Cpu->esp, (DWORD)Op->Cpu->ss);
+    Op->Cpu->eip += 1;
     return false;
 }
 
-static bool FASTCALL Cmd17(x86opcode *Op)
+static bool FASTCALL Cmd17(x86opcode *Op) // POP SS
 {
+    Op->Cpu->ss = (WORD)ReadMem32(Op->Cpu->esp);
+    Op->Cpu->esp += 4;
+    Op->Cpu->eip += 1;
     return false;
 }
 
@@ -273,13 +285,19 @@ static bool FASTCALL Cmd1D(x86opcode *Op) {
     return false;
 }
 
-static bool FASTCALL Cmd1E(x86opcode *Op)
+static bool FASTCALL Cmd1E(x86opcode *Op) // PUSH DS
 {
+    Op->Cpu->esp -= 4;
+    WriteMem32(Op->Cpu->esp, (DWORD)Op->Cpu->ds);
+    Op->Cpu->eip += 1;
     return false;
 }
 
-static bool FASTCALL Cmd1F(x86opcode *Op)
+static bool FASTCALL Cmd1F(x86opcode *Op) // POP DS
 {
+    Op->Cpu->ds = (WORD)ReadMem32(Op->Cpu->esp);
+    Op->Cpu->esp += 4;
+    Op->Cpu->eip += 1;
     return false;
 }
 
@@ -477,13 +495,35 @@ static bool FASTCALL Cmd5F(x86opcode *Op)
     return false;
 }
 
-static bool FASTCALL Cmd60(x86opcode *Op)
+static bool FASTCALL Cmd60(x86opcode *Op) // PUSHA - Push All General Purpose Registers
 {
+    DWORD esp_temp = Op->Cpu->esp;
+    esp_temp -= 4; WriteMem32(esp_temp, Op->Cpu->eax);
+    esp_temp -= 4; WriteMem32(esp_temp, Op->Cpu->ecx);
+    esp_temp -= 4; WriteMem32(esp_temp, Op->Cpu->edx);
+    esp_temp -= 4; WriteMem32(esp_temp, Op->Cpu->ebx);
+    esp_temp -= 4; WriteMem32(esp_temp, Op->Cpu->esp); // Original ESP
+    esp_temp -= 4; WriteMem32(esp_temp, Op->Cpu->ebp);
+    esp_temp -= 4; WriteMem32(esp_temp, Op->Cpu->esi);
+    esp_temp -= 4; WriteMem32(esp_temp, Op->Cpu->edi);
+    Op->Cpu->esp = esp_temp;
+    Op->Cpu->eip += 1;
     return false;
 }
 
-static bool FASTCALL Cmd61(x86opcode *Op)
+static bool FASTCALL Cmd61(x86opcode *Op) // POPA - Pop All General Purpose Registers
 {
+    DWORD esp_temp = Op->Cpu->esp;
+    Op->Cpu->edi = ReadMem32(esp_temp); esp_temp += 4;
+    Op->Cpu->esi = ReadMem32(esp_temp); esp_temp += 4;
+    Op->Cpu->ebp = ReadMem32(esp_temp); esp_temp += 4;
+    esp_temp += 4; // Skip ESP (popped value is discarded)
+    Op->Cpu->ebx = ReadMem32(esp_temp); esp_temp += 4;
+    Op->Cpu->edx = ReadMem32(esp_temp); esp_temp += 4;
+    Op->Cpu->ecx = ReadMem32(esp_temp); esp_temp += 4;
+    Op->Cpu->eax = ReadMem32(esp_temp); esp_temp += 4;
+    Op->Cpu->esp = esp_temp;
+    Op->Cpu->eip += 1;
     return false;
 }
 
@@ -524,8 +564,12 @@ static bool FASTCALL Cmd67(x86opcode *Op)
     return true;
 }
 
-static bool FASTCALL Cmd68(x86opcode *Op)
+static bool FASTCALL Cmd68(x86opcode *Op) // PUSH imm32
 {
+    DWORD imm32 = Op->Imm32;
+    Op->Cpu->esp -= 4;
+    WriteMem32(Op->Cpu->esp, imm32);
+    Op->Cpu->eip += 5;
     return false;
 }
 
@@ -534,8 +578,12 @@ static bool FASTCALL Cmd69(x86opcode *Op)
     return false;
 }
 
-static bool FASTCALL Cmd6A(x86opcode *Op)
+static bool FASTCALL Cmd6A(x86opcode *Op) // PUSH imm8
 {
+    BYTE imm8 = Op->Imm8;
+    Op->Cpu->esp -= 4;
+    WriteMem32(Op->Cpu->esp, (DWORD)(signed char)imm8); // Sign-extend
+    Op->Cpu->eip += 2;
     return false;
 }
 
@@ -564,83 +612,157 @@ static bool FASTCALL Cmd6F(x86opcode *Op)
     return false;
 }
 
-static bool FASTCALL Cmd70(x86opcode *Op)
+static bool FASTCALL Cmd70(x86opcode *Op) // JO - Jump if Overflow
 {
+    signed char imm8 = (signed char)FetchB(Op);
+    if (Op->Cpu->eflags & EFLAGS_OF)
+        Op->Cpu->eip += (int)imm8;
+    Op->Cpu->eip += 1;
     return false;
 }
 
-static bool FASTCALL Cmd71(x86opcode *Op)
+static bool FASTCALL Cmd71(x86opcode *Op) // JNO - Jump if Not Overflow
 {
+    signed char imm8 = (signed char)FetchB(Op);
+    if (!(Op->Cpu->eflags & EFLAGS_OF))
+        Op->Cpu->eip += (int)imm8;
+    Op->Cpu->eip += 1;
     return false;
 }
 
-static bool FASTCALL Cmd72(x86opcode *Op)
+static bool FASTCALL Cmd72(x86opcode *Op) // JB/JNAE - Jump if Below / Not Above or Equal
 {
+    signed char imm8 = (signed char)FetchB(Op);
+    if (Op->Cpu->eflags & EFLAGS_CF)
+        Op->Cpu->eip += (int)imm8;
+    Op->Cpu->eip += 1;
     return false;
 }
 
-static bool FASTCALL Cmd73(x86opcode *Op)
+static bool FASTCALL Cmd73(x86opcode *Op) // JAE/JNB - Jump if Above or Equal / Not Below
 {
+    signed char imm8 = (signed char)FetchB(Op);
+    if (!(Op->Cpu->eflags & EFLAGS_CF))
+        Op->Cpu->eip += (int)imm8;
+    Op->Cpu->eip += 1;
     return false;
 }
 
-static bool FASTCALL Cmd74(x86opcode *Op)
+static bool FASTCALL Cmd74(x86opcode *Op) // JZ/JE - Jump if Zero / Equal
 {
+    signed char imm8 = (signed char)FetchB(Op);
+    if (Op->Cpu->eflags & EFLAGS_ZF)
+        Op->Cpu->eip += (int)imm8;
+    Op->Cpu->eip += 1;
     return false;
 }
 
-static bool FASTCALL Cmd75(x86opcode *Op)
+static bool FASTCALL Cmd75(x86opcode *Op) // JNZ/JNE - Jump if Not Zero / Not Equal
 {
+    signed char imm8 = (signed char)FetchB(Op);
+    if (!(Op->Cpu->eflags & EFLAGS_ZF))
+        Op->Cpu->eip += (int)imm8;
+    Op->Cpu->eip += 1;
     return false;
 }
 
-static bool FASTCALL Cmd76(x86opcode *Op)
+static bool FASTCALL Cmd76(x86opcode *Op) // JBE/JNA - Jump if Below or Equal / Not Above
 {
+    signed char imm8 = (signed char)FetchB(Op);
+    if (Op->Cpu->eflags & (EFLAGS_CF | EFLAGS_ZF))
+        Op->Cpu->eip += (int)imm8;
+    Op->Cpu->eip += 1;
     return false;
 }
 
-static bool FASTCALL Cmd77(x86opcode *Op)
+static bool FASTCALL Cmd77(x86opcode *Op) // JA/JNBE - Jump if Above / Not Below or Equal
 {
+    signed char imm8 = (signed char)FetchB(Op);
+    if (!(Op->Cpu->eflags & (EFLAGS_CF | EFLAGS_ZF)))
+        Op->Cpu->eip += (int)imm8;
+    Op->Cpu->eip += 1;
     return false;
 }
 
-static bool FASTCALL Cmd78(x86opcode *Op)
+static bool FASTCALL Cmd78(x86opcode *Op) // JS - Jump if Sign
 {
+    signed char imm8 = (signed char)FetchB(Op);
+    if (Op->Cpu->eflags & EFLAGS_SF)
+        Op->Cpu->eip += (int)imm8;
+    Op->Cpu->eip += 1;
     return false;
 }
 
-static bool FASTCALL Cmd79(x86opcode *Op)
+static bool FASTCALL Cmd79(x86opcode *Op) // JNS - Jump if Not Sign
 {
+    signed char imm8 = (signed char)FetchB(Op);
+    if (!(Op->Cpu->eflags & EFLAGS_SF))
+        Op->Cpu->eip += (int)imm8;
+    Op->Cpu->eip += 1;
     return false;
 }
 
-static bool FASTCALL Cmd7A(x86opcode *Op)
+static bool FASTCALL Cmd7A(x86opcode *Op) // JP/JPE - Jump if Parity / Parity Even
 {
+    signed char imm8 = (signed char)FetchB(Op);
+    if (Op->Cpu->eflags & EFLAGS_PF)
+        Op->Cpu->eip += (int)imm8;
+    Op->Cpu->eip += 1;
     return false;
 }
 
-static bool FASTCALL Cmd7B(x86opcode *Op)
+static bool FASTCALL Cmd7B(x86opcode *Op) // JNP/JPO - Jump if Not Parity / Parity Odd
 {
+    signed char imm8 = (signed char)FetchB(Op);
+    if (!(Op->Cpu->eflags & EFLAGS_PF))
+        Op->Cpu->eip += (int)imm8;
+    Op->Cpu->eip += 1;
     return false;
 }
 
-static bool FASTCALL Cmd7C(x86opcode *Op)
+static bool FASTCALL Cmd7C(x86opcode *Op) // JL/JNGE - Jump if Less / Not Greater or Equal
 {
+    signed char imm8 = (signed char)FetchB(Op);
+    BOOL sf = (Op->Cpu->eflags & EFLAGS_SF) != 0;
+    BOOL of = (Op->Cpu->eflags & EFLAGS_OF) != 0;
+    if (sf != of)
+        Op->Cpu->eip += (int)imm8;
+    Op->Cpu->eip += 1;
     return false;
 }
 
-static bool FASTCALL Cmd7D(x86opcode *Op)
+static bool FASTCALL Cmd7D(x86opcode *Op) // JGE/JNL - Jump if Greater or Equal / Not Less
 {
+    signed char imm8 = (signed char)FetchB(Op);
+    BOOL sf = (Op->Cpu->eflags & EFLAGS_SF) != 0;
+    BOOL of = (Op->Cpu->eflags & EFLAGS_OF) != 0;
+    if (sf == of)
+        Op->Cpu->eip += (int)imm8;
+    Op->Cpu->eip += 1;
     return false;
 }
 
-static bool FASTCALL Cmd7E(x86opcode *Op)
+static bool FASTCALL Cmd7E(x86opcode *Op) // JLE/JNG - Jump if Less or Equal / Not Greater
 {
+    signed char imm8 = (signed char)FetchB(Op);
+    BOOL sf = (Op->Cpu->eflags & EFLAGS_SF) != 0;
+    BOOL of = (Op->Cpu->eflags & EFLAGS_OF) != 0;
+    BOOL zf = (Op->Cpu->eflags & EFLAGS_ZF) != 0;
+    if (zf || (sf != of))
+        Op->Cpu->eip += (int)imm8;
+    Op->Cpu->eip += 1;
     return false;
 }
 
-static bool FASTCALL Cmd7F(x86opcode *Op)
+static bool FASTCALL Cmd7F(x86opcode *Op) // JG/JNLE - Jump if Greater / Not Less or Equal
 {
+    signed char imm8 = (signed char)FetchB(Op);
+    BOOL sf = (Op->Cpu->eflags & EFLAGS_SF) != 0;
+    BOOL of = (Op->Cpu->eflags & EFLAGS_OF) != 0;
+    BOOL zf = (Op->Cpu->eflags & EFLAGS_ZF) != 0;
+    if (!zf && (sf == of))
+        Op->Cpu->eip += (int)imm8;
+    Op->Cpu->eip += 1;
     return false;
 }
 
@@ -699,6 +821,41 @@ static bool FASTCALL Cmd8C(x86opcode *Op)
 
 // LEA reg, r/m (Cmd8D) - Load Effective Address
 static bool FASTCALL Cmd8D(x86opcode *Op) { FetchModRM(Op); DWORD addr; BOOL is_mem; int reg_idx = ResolveOperand(Op, 1, &addr, &is_mem); ResolveOperand(Op, 0, &addr, &is_mem); WriteReg(Op->Cpu, reg_idx, addr); Op->Cpu->eip += 2; return false; }
+
+// MOV r/m16, Sreg (Cmd8C) and MOV Sreg, r/m16 (Cmd8E), POP r/m (Cmd8F)
+static bool FASTCALL Cmd8C(x86opcode *Op) { FetchModRM(Op); WORD seg_val; int reg = Op->Reg; switch(reg) { case 0: seg_val = Op->Cpu->es; break; case 1: seg_val = Op->Cpu->cs; break; case 2: seg_val = Op->Cpu->ss; break; case 3: seg_val = Op->Cpu->ds; break; case 4: seg_val = Op->Cpu->fs; break; case 5: seg_val = Op->Cpu->gs; break; default: seg_val = 0; break; } DWORD addr; BOOL is_mem; int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem); if (is_mem) WriteMem32(addr, seg_val); else WriteReg(Op->Cpu, rm_idx, seg_val); Op->Cpu->eip += 2; return false; }
+
+static bool FASTCALL Cmd8E(x86opcode *Op) // MOV Sreg, r/m16
+{
+    FetchModRM(Op);
+    DWORD addr; BOOL is_mem;
+    int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem);
+    WORD val = is_mem ? (WORD)ReadMem32(addr) : (WORD)ReadReg(Op->Cpu, rm_idx);
+    int reg = Op->Reg;
+    switch(reg) {
+        case 0: Op->Cpu->es = val; break;
+        case 1: /* CS is not allowed */ break;
+        case 2: Op->Cpu->ss = val; break;
+        case 3: Op->Cpu->ds = val; break;
+        case 4: Op->Cpu->fs = val; break;
+        case 5: Op->Cpu->gs = val; break;
+    }
+    Op->Cpu->eip += 2;
+    return false;
+}
+
+static bool FASTCALL Cmd8F(x86opcode *Op) // POP r/m
+{
+    FetchModRM(Op);
+    DWORD addr; BOOL is_mem;
+    int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem);
+    DWORD val = ReadMem32(Op->Cpu->esp);
+    Op->Cpu->esp += 4;
+    if (is_mem) WriteMem32(addr, val);
+    else WriteReg(Op->Cpu, rm_idx, val);
+    Op->Cpu->eip += 2;
+    return false;
+}
 
 // XCHG EAX, reg (Cmd90-Cmd97) - NOP when reg=EAX
 static bool FASTCALL Cmd90(x86opcode *Op) { /* XCHG EAX, EAX = NOP */ Op->Cpu->eip += 1; return false; }
@@ -1300,23 +1457,42 @@ static bool FASTCALL CmdDF(x86opcode *Op)
     return false;
 }
 
-static bool FASTCALL CmdE0(x86opcode *Op)
+static bool FASTCALL CmdE0(x86opcode *Op) // LOOPNE/LOOPNZ - Loop While Not Equal/Zero
 {
+    signed char imm8 = (signed char)FetchB(Op);
+    Op->Cpu->ecx--;
+    if (Op->Cpu->ecx != 0 && !(Op->Cpu->eflags & EFLAGS_ZF))
+        Op->Cpu->eip += (int)imm8;
+    Op->Cpu->eip += 1;
     return false;
 }
 
-static bool FASTCALL CmdE1(x86opcode *Op)
+static bool FASTCALL CmdE1(x86opcode *Op) // LOOPE/LOOPZ - Loop While Equal/Zero
 {
+    signed char imm8 = (signed char)FetchB(Op);
+    Op->Cpu->ecx--;
+    if (Op->Cpu->ecx != 0 && (Op->Cpu->eflags & EFLAGS_ZF))
+        Op->Cpu->eip += (int)imm8;
+    Op->Cpu->eip += 1;
     return false;
 }
 
-static bool FASTCALL CmdE2(x86opcode *Op)
+static bool FASTCALL CmdE2(x86opcode *Op) // LOOP - Loop While ECX != 0
 {
+    signed char imm8 = (signed char)FetchB(Op);
+    Op->Cpu->ecx--;
+    if (Op->Cpu->ecx != 0)
+        Op->Cpu->eip += (int)imm8;
+    Op->Cpu->eip += 1;
     return false;
 }
 
-static bool FASTCALL CmdE3(x86opcode *Op)
+static bool FASTCALL CmdE3(x86opcode *Op) // JCXZ/JECXZ - Jump if ECX is Zero
 {
+    signed char imm8 = (signed char)FetchB(Op);
+    if (Op->Cpu->ecx == 0)
+        Op->Cpu->eip += (int)imm8;
+    Op->Cpu->eip += 1;
     return false;
 }
 
