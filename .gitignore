@@ -1,6 +1,24 @@
-Nothing should be ignored based on the provided file changes. The only modified file is a source code file (.cpp), which should not be added to .gitignore.node_modules/
-.next/
+```
+# Compiled and build artifacts
+*.dll
+*.o
+*.obj
+release/
+
+# Dependencies
+node_modules/
+.venv/
+venv/
+__pycache__/
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+
+# Editors
+.vscode/
+.idea/
+```.next/
 dist/
 build/
-*.log
-node_modules/
