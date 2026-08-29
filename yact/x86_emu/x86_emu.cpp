@@ -8,6 +8,7 @@
 #include <util.h>
 #include <stdio.h>
 #include <classes.h>
+#include "logging.h"
 //#include <callbacks.h>
 
 typedef void* t_CbCallAtThreadExit(void* Func, void*Param);
@@ -103,6 +104,8 @@ void LoadEmulatorDll()
 EMU_EXPORT BOOL EmuInitialize(void)
 {
     LoadEmulatorDll();
+    InitDebugLog();
+    WriteDebugLog("[INIT] Emulator initialized");
     return EmuDB_Initialize[0]() && EmuBS_Initialize();
 }
 
@@ -167,6 +170,9 @@ EMU_EXPORT DWORD EmuExecute(DWORD Addr, int NParams, ...)
         }
     }
 
+    // Log emulation start
+    LogEmulationStart(Addr, NParams);
+
     DWORD Ret = 0;
 
     switch (NParams)
@@ -200,6 +206,9 @@ EMU_EXPORT DWORD EmuExecute(DWORD Addr, int NParams, ...)
             printf("EmuExecute: too many params %d\n", NParams);
             ExitProcess(0);
     }
+
+    // Log emulation end
+    LogEmulationEnd(Ret);
 
     if (UsedDosBox >= 0)
     {

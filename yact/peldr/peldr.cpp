@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <util.h>
 #include <assert.h>
+#include "../supp/logging.h"
 
 static LPCRITICAL_SECTION PeInitLdrCs()
 {
@@ -215,7 +216,12 @@ static PE_HANDLE PeLdrOpenModuleNoAdd(LPCWSTR FileName)
     HANDLE H = CreateFileW(Buff, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, 0, 0);
     if (H == INVALID_HANDLE_VALUE)
     {
+        // Log DLL load failure with error code
+        char dllNameA[512];
+        WideCharToMultiByte(CP_ACP, 0, Buff, -1, dllNameA, 512, NULL, NULL);
+        DWORD lastError = GetLastError();
         LogErr("PeLdr can't open file: %S\n", Buff);
+        LogDllLoadFailure(dllNameA, lastError);
         SetLastError(ERROR_NOT_FOUND);
         return NULL;
     }
