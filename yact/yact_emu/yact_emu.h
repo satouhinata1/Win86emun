@@ -43,6 +43,8 @@ extern "C" {
         int Scale;
         int Index;
         int Base;
+
+        PCPU_STATE Cpu;  // CPU 状態へのポインタ
     };
 
 

@@ -39,4 +39,63 @@ extern "C" {
 }
 #endif
 
+/*
+ * CPU State & EFLAGS Definitions (Phase 4)
+ */
+#ifndef _CPU_STATE_DEFINED
+#define _CPU_STATE_DEFINED
+
+#define EFLAGS_CF  (1 << 0)
+#define EFLAGS_PF  (1 << 2)
+#define EFLAGS_AF  (1 << 4)
+#define EFLAGS_ZF  (1 << 6)
+#define EFLAGS_SF  (1 << 7)
+#define EFLAGS_TF  (1 << 8)
+#define EFLAGS_IF  (1 << 9)
+#define EFLAGS_DF  (1 << 10)
+#define EFLAGS_OF  (1 << 11)
+
+typedef struct _CPU_STATE {
+    DWORD eax, ecx, edx, ebx, esp, ebp, esi, edi;
+    DWORD eip;
+    DWORD eflags;
+    WORD cs, ds, es, ss, fs, gs;
+} CPU_STATE, *PCPU_STATE;
+
+static inline DWORD CalcParity(DWORD v) {
+    DWORD b = v & 0xFF;
+    b ^= (b >> 4);
+    b &= 0x0F;
+    return (0x6996 >> b) & 1;
+}
+
+static inline void UpdateFlags_Add(PCPU_STATE cpu, DWORD res, DWORD op1, DWORD op2) {
+    cpu->eflags &= ~(EFLAGS_CF | EFLAGS_PF | EFLAGS_AF | EFLAGS_ZF | EFLAGS_SF | EFLAGS_OF);
+    if (res == 0) cpu->eflags |= EFLAGS_ZF;
+    if (res & 0x80000000) cpu->eflags |= EFLAGS_SF;
+    if (CalcParity(res)) cpu->eflags |= EFLAGS_PF;
+    if (res < op1) cpu->eflags |= EFLAGS_CF;
+    if (((op1 & 0xF) + (op2 & 0xF)) > 0xF) cpu->eflags |= EFLAGS_AF;
+    if (!((op1 ^ op2) & 0x80000000) && ((op1 ^ res) & 0x80000000)) cpu->eflags |= EFLAGS_OF;
+}
+
+static inline void UpdateFlags_Sub(PCPU_STATE cpu, DWORD res, DWORD op1, DWORD op2) {
+    cpu->eflags &= ~(EFLAGS_CF | EFLAGS_PF | EFLAGS_AF | EFLAGS_ZF | EFLAGS_SF | EFLAGS_OF);
+    if ((op1 & 0xF) < (op2 & 0xF)) cpu->eflags |= EFLAGS_AF;
+    if (res == 0) cpu->eflags |= EFLAGS_ZF;
+    if (res & 0x80000000) cpu->eflags |= EFLAGS_SF;
+    if (CalcParity(res)) cpu->eflags |= EFLAGS_PF;
+    if (op1 < op2) cpu->eflags |= EFLAGS_CF;
+    if (((op1 ^ op2) & 0x80000000) && ((op1 ^ res) & 0x80000000)) cpu->eflags |= EFLAGS_OF;
+}
+
+static inline void UpdateFlags_Logical(PCPU_STATE cpu, DWORD res) {
+    cpu->eflags &= ~(EFLAGS_CF | EFLAGS_OF | EFLAGS_AF | EFLAGS_PF | EFLAGS_ZF | EFLAGS_SF);
+    if (res == 0) cpu->eflags |= EFLAGS_ZF;
+    if (res & 0x80000000) cpu->eflags |= EFLAGS_SF;
+    if (CalcParity(res)) cpu->eflags |= EFLAGS_PF;
+}
+
+#endif // _CPU_STATE_DEFINED
+
 #endif // __EMUL_H

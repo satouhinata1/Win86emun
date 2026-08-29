@@ -8,9 +8,19 @@ static bool FASTCALL Cmd00(x86opcode *Op)
     return false;
 }
 
-static bool FASTCALL Cmd01(x86opcode *Op)
-{
-    Op->Mnemonics = "add";
+// ADD r/m, reg (Cmd01)
+static bool FASTCALL Cmd01(x86opcode *Op) {
+    FetchModRM(Op);
+    DWORD addr; BOOL is_mem;
+    int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem);
+    DWORD op1 = is_mem ? ReadMem32(addr) : ReadReg(Op->Cpu, rm_idx);
+    int reg_idx = ResolveOperand(Op, 1, &addr, &is_mem);
+    DWORD op2 = ReadReg(Op->Cpu, reg_idx);
+    DWORD res = op1 + op2;
+    if (is_mem) WriteMem32(addr, res);
+    else WriteReg(Op->Cpu, rm_idx, res);
+    UpdateFlags_Add(Op->Cpu, res, op1, op2);
+    Op->Cpu->eip += 2;
     return false;
 }
 
@@ -224,8 +234,19 @@ static bool FASTCALL Cmd28(x86opcode *Op)
     return false;
 }
 
-static bool FASTCALL Cmd29(x86opcode *Op)
-{
+// SUB r/m, reg (Cmd29)
+static bool FASTCALL Cmd29(x86opcode *Op) {
+    FetchModRM(Op);
+    DWORD addr; BOOL is_mem;
+    int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem);
+    DWORD op1 = is_mem ? ReadMem32(addr) : ReadReg(Op->Cpu, rm_idx);
+    int reg_idx = ResolveOperand(Op, 1, &addr, &is_mem);
+    DWORD op2 = ReadReg(Op->Cpu, reg_idx);
+    DWORD res = op1 - op2;
+    if (is_mem) WriteMem32(addr, res);
+    else WriteReg(Op->Cpu, rm_idx, res);
+    UpdateFlags_Sub(Op->Cpu, res, op1, op2);
+    Op->Cpu->eip += 2;
     return false;
 }
 
@@ -305,8 +326,17 @@ static bool FASTCALL Cmd38(x86opcode *Op)
     return false;
 }
 
-static bool FASTCALL Cmd39(x86opcode *Op)
-{
+// CMP r/m, reg (Cmd39)
+static bool FASTCALL Cmd39(x86opcode *Op) {
+    FetchModRM(Op);
+    DWORD addr; BOOL is_mem;
+    int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem);
+    DWORD op1 = is_mem ? ReadMem32(addr) : ReadReg(Op->Cpu, rm_idx);
+    int reg_idx = ResolveOperand(Op, 1, &addr, &is_mem);
+    DWORD op2 = ReadReg(Op->Cpu, reg_idx);
+    DWORD res = op1 - op2;
+    UpdateFlags_Sub(Op->Cpu, res, op1, op2);
+    Op->Cpu->eip += 2;
     return false;
 }
 
@@ -421,65 +451,21 @@ static bool FASTCALL Cmd4F(x86opcode *Op)
     return false;
 }
 
-static bool FASTCALL Cmd50(x86opcode *Op)
-{
-    return false;
-}
+// PUSH EAX (Cmd50) ～ PUSH EDI (Cmd57)
+static bool FASTCALL Cmd50(x86opcode *Op) { Op->Cpu->esp -= 4; WriteMem32(Op->Cpu->esp, Op->Cpu->eax); Op->Cpu->eip += 1; return false; }
+static bool FASTCALL Cmd51(x86opcode *Op) { Op->Cpu->esp -= 4; WriteMem32(Op->Cpu->esp, Op->Cpu->ecx); Op->Cpu->eip += 1; return false; }
+static bool FASTCALL Cmd52(x86opcode *Op) { Op->Cpu->esp -= 4; WriteMem32(Op->Cpu->esp, Op->Cpu->edx); Op->Cpu->eip += 1; return false; }
+static bool FASTCALL Cmd53(x86opcode *Op) { Op->Cpu->esp -= 4; WriteMem32(Op->Cpu->esp, Op->Cpu->ebx); Op->Cpu->eip += 1; return false; }
+static bool FASTCALL Cmd54(x86opcode *Op) { Op->Cpu->esp -= 4; WriteMem32(Op->Cpu->esp, Op->Cpu->esp + 4); Op->Cpu->eip += 1; return false; }
+static bool FASTCALL Cmd55(x86opcode *Op) { Op->Cpu->esp -= 4; WriteMem32(Op->Cpu->esp, Op->Cpu->ebp); Op->Cpu->eip += 1; return false; }
+static bool FASTCALL Cmd56(x86opcode *Op) { Op->Cpu->esp -= 4; WriteMem32(Op->Cpu->esp, Op->Cpu->esi); Op->Cpu->eip += 1; return false; }
+static bool FASTCALL Cmd57(x86opcode *Op) { Op->Cpu->esp -= 4; WriteMem32(Op->Cpu->esp, Op->Cpu->edi); Op->Cpu->eip += 1; return false; }
 
-static bool FASTCALL Cmd51(x86opcode *Op)
-{
-    return false;
-}
-
-static bool FASTCALL Cmd52(x86opcode *Op)
-{
-    return false;
-}
-
-static bool FASTCALL Cmd53(x86opcode *Op)
-{
-    return false;
-}
-
-static bool FASTCALL Cmd54(x86opcode *Op)
-{
-    return false;
-}
-
-static bool FASTCALL Cmd55(x86opcode *Op)
-{
-    return false;
-}
-
-static bool FASTCALL Cmd56(x86opcode *Op)
-{
-    return false;
-}
-
-static bool FASTCALL Cmd57(x86opcode *Op)
-{
-    return false;
-}
-
-static bool FASTCALL Cmd58(x86opcode *Op)
-{
-    return false;
-}
-
-static bool FASTCALL Cmd59(x86opcode *Op)
-{
-    return false;
-}
-
-static bool FASTCALL Cmd5A(x86opcode *Op)
-{
-    return false;
-}
-
-static bool FASTCALL Cmd5B(x86opcode *Op)
-{
-    return false;
-}
+// POP EAX (Cmd58) ～ POP EDI (Cmd5F)
+static bool FASTCALL Cmd58(x86opcode *Op) { Op->Cpu->eax = ReadMem32(Op->Cpu->esp); Op->Cpu->esp += 4; Op->Cpu->eip += 1; return false; }
+static bool FASTCALL Cmd59(x86opcode *Op) { Op->Cpu->ecx = ReadMem32(Op->Cpu->esp); Op->Cpu->esp += 4; Op->Cpu->eip += 1; return false; }
+static bool FASTCALL Cmd5A(x86opcode *Op) { Op->Cpu->edx = ReadMem32(Op->Cpu->esp); Op->Cpu->esp += 4; Op->Cpu->eip += 1; return false; }
+static bool FASTCALL Cmd5B(x86opcode *Op) { Op->Cpu->ebx = ReadMem32(Op->Cpu->esp); Op->Cpu->esp += 4; Op->Cpu->eip += 1; return false; }
 
 static bool FASTCALL Cmd5C(x86opcode *Op)
 {
