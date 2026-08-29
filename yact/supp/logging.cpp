@@ -5,15 +5,16 @@
 #include "logging.h"
 #include <stdio.h>
 #include <time.h>
-#include <mutex>
 #include <io.h>
 #include <fcntl.h>
 #include <share.h>
+#include <sys/stat.h>
 
 static const char* LOG_FILE_NAME = "win86emu.log";
 static int LogFileHandle = 0;
 static bool LogInitialized = false;
-static std::mutex LogMutex;
+// Note: mutex disabled for MinGW win32 threading model compatibility
+// static std::mutex LogMutex;
 
 // Get current timestamp as formatted string
 static void GetTimestamp(char* buffer, size_t bufferSize)
@@ -25,13 +26,13 @@ static void GetTimestamp(char* buffer, size_t bufferSize)
 
 void InitDebugLog(void)
 {
-    std::lock_guard<std::mutex> lock(LogMutex);
+    // std::lock_guard<std::mutex> lock(LogMutex);
     
     if (LogInitialized)
         return;
     
     // Open log file in append mode, create if not exists
-    if (_sopen_s(&LogFileHandle, LOG_FILE_NAME, _O_RDWR | _O_APPEND | _O_CREAT, SH_DENYNO, _S_IREAD | _S_IWRITE))
+    if (_sopen_s(&LogFileHandle, LOG_FILE_NAME, _O_RDWR | _O_APPEND | _O_CREAT, SH_DENYNO, S_IREAD | S_IWRITE))
     {
         LogFileHandle = 0;
         return;
@@ -51,7 +52,7 @@ void InitDebugLog(void)
 
 void ShutdownDebugLog(void)
 {
-    std::lock_guard<std::mutex> lock(LogMutex);
+    // std::lock_guard<std::mutex> lock(LogMutex);
     
     if (!LogInitialized || LogFileHandle == 0)
         return;
@@ -72,7 +73,7 @@ void ShutdownDebugLog(void)
 
 void WriteDebugLog(const char* format, ...)
 {
-    std::lock_guard<std::mutex> lock(LogMutex);
+    // std::lock_guard<std::mutex> lock(LogMutex);
     
     if (!LogInitialized || LogFileHandle == 0)
         return;
