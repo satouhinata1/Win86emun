@@ -84,3 +84,4 @@ zig-out/
 *.tar.xz
 *.tar.zst
 ```.next/
+.next/
