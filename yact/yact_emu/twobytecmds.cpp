@@ -249,6 +249,11 @@ static bool FASTCALL Cmd30(x86opcode *Op)
 
 static bool FASTCALL Cmd31(x86opcode *Op)
 {
+    // RDTSC (0F 31) - Read Time-Stamp Counter
+    // Simplified: return 0 in EDX:EAX
+    Op->Cpu->eax = 0;
+    Op->Cpu->edx = 0;
+    Op->Cpu->eip += 2;
     return false;
 }
 
@@ -814,6 +819,32 @@ static bool FASTCALL CmdA1(x86opcode *Op)
 
 static bool FASTCALL CmdA2(x86opcode *Op)
 {
+    // CPUID (0F A2) - CPU Identification
+    // Simplified: return basic Intel-compatible dummy values
+    switch (Op->Cpu->eax) {
+        case 0:
+            // EAX=0: Maximum standard function number
+            Op->Cpu->eax = 1;
+            Op->Cpu->ebx = 0x756E6547; // "Genu"
+            Op->Cpu->ecx = 0x6C65746E; // "ntel"
+            Op->Cpu->edx = 0x49656E69; // "ineI"
+            break;
+        case 1:
+            // EAX=1: Processor info and feature flags
+            Op->Cpu->eax = 0x000006D8; // Family 6, Model 13, Stepping 8 (Pentium M-ish)
+            Op->Cpu->ebx = 0;
+            Op->Cpu->ecx = 0;
+            Op->Cpu->edx = 0;
+            break;
+        default:
+            // Other functions: return zeros
+            Op->Cpu->eax = 0;
+            Op->Cpu->ebx = 0;
+            Op->Cpu->ecx = 0;
+            Op->Cpu->edx = 0;
+            break;
+    }
+    Op->Cpu->eip += 2;
     return false;
 }
 
@@ -884,11 +915,53 @@ static bool FASTCALL CmdAF(x86opcode *Op)
 
 static bool FASTCALL CmdB0(x86opcode *Op)
 {
+    // CMPXCHG r/m8, reg (0F B0)
+    FetchModRM(Op);
+    DWORD addr; BOOL is_mem;
+    int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem);
+    BYTE op1 = is_mem ? (BYTE)ReadMem32(addr) : (BYTE)ReadReg(Op->Cpu, rm_idx);
+    int reg_idx = ResolveOperand(Op, 1, &addr, &is_mem);
+    BYTE al = (BYTE)(Op->Cpu->eax & 0xFF);
+    BYTE op2 = (BYTE)ReadReg(Op->Cpu, reg_idx);
+    
+    DWORD res = (DWORD)al - (DWORD)op1;
+    UpdateFlags_Sub(Op->Cpu, res, (DWORD)al, (DWORD)op1);
+    
+    if (Op->Cpu->eflags & EFLAGS_ZF) {
+        // ZF=1: write reg to r/m
+        if (is_mem) WriteMem32(addr, (DWORD)op2);
+        else WriteReg(Op->Cpu, rm_idx, (DWORD)op2);
+    } else {
+        // ZF=0: write r/m to AL
+        Op->Cpu->eax = (Op->Cpu->eax & 0xFFFFFF00) | op1;
+    }
+    Op->Cpu->eip += 2;
     return false;
 }
 
 static bool FASTCALL CmdB1(x86opcode *Op)
 {
+    // CMPXCHG r/m32, reg (0F B1)
+    FetchModRM(Op);
+    DWORD addr; BOOL is_mem;
+    int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem);
+    DWORD op1 = is_mem ? ReadMem32(addr) : ReadReg(Op->Cpu, rm_idx);
+    int reg_idx = ResolveOperand(Op, 1, &addr, &is_mem);
+    DWORD eax = Op->Cpu->eax;
+    DWORD op2 = ReadReg(Op->Cpu, reg_idx);
+    
+    DWORD res = eax - op1;
+    UpdateFlags_Sub(Op->Cpu, res, eax, op1);
+    
+    if (Op->Cpu->eflags & EFLAGS_ZF) {
+        // ZF=1: write reg to r/m
+        if (is_mem) WriteMem32(addr, op2);
+        else WriteReg(Op->Cpu, rm_idx, op2);
+    } else {
+        // ZF=0: write r/m to EAX
+        Op->Cpu->eax = op1;
+    }
+    Op->Cpu->eip += 2;
     return false;
 }
 
@@ -964,11 +1037,54 @@ static bool FASTCALL CmdBF(x86opcode *Op)
 
 static bool FASTCALL CmdC0(x86opcode *Op)
 {
+    // XADD r/m8, reg (0F C0)
+    FetchModRM(Op);
+    DWORD addr; BOOL is_mem;
+    int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem);
+    BYTE op1 = is_mem ? (BYTE)ReadMem32(addr) : (BYTE)ReadReg(Op->Cpu, rm_idx);
+    int reg_idx = ResolveOperand(Op, 1, &addr, &is_mem);
+    BYTE op2 = (BYTE)ReadReg(Op->Cpu, reg_idx);
+    
+    BYTE sum = op1 + op2;
+    DWORD res = (DWORD)op1 + (DWORD)op2;
+    UpdateFlags_Add(Op->Cpu, res, (DWORD)op1, (DWORD)op2);
+    
+    // Write sum to r/m
+    if (is_mem) WriteMem32(addr, (DWORD)sum);
+    else {
+        // For 8-bit register write, preserve upper bits
+        DWORD oldVal = ReadReg(Op->Cpu, rm_idx);
+        WriteReg(Op->Cpu, rm_idx, (oldVal & 0xFFFFFF00) | sum);
+    }
+    
+    // Write original r/m value to reg (8-bit: only lower 8 bits affected)
+    DWORD oldReg = ReadReg(Op->Cpu, reg_idx);
+    WriteReg(Op->Cpu, reg_idx, (oldReg & 0xFFFFFF00) | op1);
+    Op->Cpu->eip += 2;
     return false;
 }
 
 static bool FASTCALL CmdC1(x86opcode *Op)
 {
+    // XADD r/m32, reg (0F C1)
+    FetchModRM(Op);
+    DWORD addr; BOOL is_mem;
+    int rm_idx = ResolveOperand(Op, 0, &addr, &is_mem);
+    DWORD op1 = is_mem ? ReadMem32(addr) : ReadReg(Op->Cpu, rm_idx);
+    int reg_idx = ResolveOperand(Op, 1, &addr, &is_mem);
+    DWORD op2 = ReadReg(Op->Cpu, reg_idx);
+    
+    DWORD sum = op1 + op2;
+    UpdateFlags_Add(Op->Cpu, sum, op1, op2);
+    
+    // Write sum to r/m
+    if (is_mem) WriteMem32(addr, sum);
+    else WriteReg(Op->Cpu, rm_idx, sum);
+    
+    // Write original r/m value to reg
+    WriteReg(Op->Cpu, reg_idx, op1);
+    
+    Op->Cpu->eip += 2;
     return false;
 }
 
