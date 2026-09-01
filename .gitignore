@@ -6,4 +6,3 @@ Win86emun
 dist/
 build/
 *.log
-node_modules/
