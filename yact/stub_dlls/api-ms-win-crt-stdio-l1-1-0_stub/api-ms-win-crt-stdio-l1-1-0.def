@@ -61,3 +61,6 @@ EXPORTS
     vsnprintf = msvcrt.vsnprintf
     vsprintf = msvcrt.vsprintf
     vsscanf = msvcrt.vsscanf
+    __acrt_iob_func = msvcrt.__acrt_iob_func
+    __stdio_common_vfprintf = msvcrt.__stdio_common_vfprintf
+    __stdio_common_vfwprintf = msvcrt.__stdio_common_vfwprintf
