@@ -1,9 +1,14 @@
 ```
 # Executable/binary files
+*.exe
+*.dll
+*.so
+*.o
+*.obj
+*.out
 Win86emun
 ```node_modules/
 .next/
 dist/
 build/
 *.log
-node_modules/
