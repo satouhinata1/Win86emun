@@ -1,40 +1,29 @@
 ```
-# Build artifacts and compiled files
-*.def
-*.obj
-*.lib
-*.dll
-*.exe
-*.pdb
-*.ilk
-
-# Dependencies and build directories
-build/
-dist/
-target/
-node_modules/
-venv/
-.venv/
-__pycache__/
-*.egg-info/
-
-# IDE and editor files
-.vscode/
-.idea/
-*.swp
-*.swo
-*.tmp
-
-# System files
-.DS_Store
-Thumbs.db
-
-# Logs
-*.log
-
-# Environment
-.env
-.env.local
-*.env.*
-```.next/
+# Compressed archives
+*.zip
+*.gz
+*.tar
+*.tgz
+*.bz2
+*.xz
+*.7z
+*.rar
+*.zst
+*.lz4
+*.lzh
+*.cab
+*.arj
+*.rpm
+*.deb
+*.Z
+*.lz
+*.lzo
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.tar.zst
+```node_modules/
 .next/
+dist/
+build/
+*.log
