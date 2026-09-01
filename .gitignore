@@ -6,3 +6,4 @@ yact/stub_dlls/*/api-ms-win-crt-*-stub/
 dist/
 build/
 *.log
+node_modules/
