@@ -1,39 +1,8 @@
 ```
-# Build artifacts and binaries
-*.dll
-*.exe
-*.obj
-*.o
-*.out
-release/
-
-# Dependencies and temporary directories
-yact/stub_dlls/*/build/
-yact/stub_dlls/*/_build/
-yact/stub_dlls/*/dist/
-yact/stub_dlls/*/_dist/
-
-# Temporary files
-*.tmp
-*.temp
-*.log
-
-# Environment files
-.env
-.env.local
-*.env.*
-
-# Editors and IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS specific
-.DS_Store
-Thumbs.db
+# Windows CRT stub DLLs
+yact/stub_dlls/*/api-ms-win-crt-*-stub/
 ```node_modules/
 .next/
 dist/
 build/
-node_modules/
+*.log

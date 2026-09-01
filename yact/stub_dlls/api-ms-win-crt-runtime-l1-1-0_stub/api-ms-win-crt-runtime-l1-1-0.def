@@ -29,4 +29,4 @@ EXPORTS
     abort = my_abort
     atexit = my_atexit
     exit = my_exit
-    quick_exit
+    quick_exit = my_quick_exit

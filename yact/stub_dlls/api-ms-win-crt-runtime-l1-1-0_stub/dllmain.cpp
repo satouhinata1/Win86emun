@@ -142,4 +142,4 @@ extern "C" __declspec(dllexport) int _set_errno(int a) { return p__set_errno ? p
 extern "C" __declspec(dllexport) void my_abort(void) { if (p_abort) p_abort(); for(;;); }
 extern "C" __declspec(dllexport) int my_atexit(void (*a)(void)) { return p_atexit ? p_atexit(a) : 0; }
 extern "C" __declspec(dllexport) void my_exit(int a) { if (p_exit) p_exit(a); for(;;); }
-extern "C" __declspec(dllexport) void quick_exit(int a) { if (p_quick_exit) p_quick_exit(a); for(;;); }
+extern "C" __declspec(dllexport) void my_quick_exit(int a) { if (p_quick_exit) p_quick_exit(a); for(;;); }

@@ -258,3 +258,12 @@ extern "C" __declspec(dllexport) int vscanf(const char* a, void* b) { return p_v
 extern "C" __declspec(dllexport) int vsnprintf(char* a, size_t b, const char* c, void* d) { return p_vsnprintf ? p_vsnprintf(a, b, c, d) : 0; }
 extern "C" __declspec(dllexport) int vsprintf(char* a, const char* b, void* c) { return p_vsprintf ? p_vsprintf(a, b, c) : 0; }
 extern "C" __declspec(dllexport) int vsscanf(const char* a, const char* b, void* c) { return p_vsscanf ? p_vsscanf(a, b, c) : 0; }
+
+// 可変長引数関数の実装（_fn_ptr を使用）
+extern "C" __declspec(dllexport) int fprintf(FILE* a, const char* b, ...) { return p_fprintf_fn_ptr ? p_fprintf_fn_ptr(a, b) : 0; }
+extern "C" __declspec(dllexport) int fscanf(FILE* a, const char* b, ...) { return p_fscanf_fn_ptr ? p_fscanf_fn_ptr(a, b) : 0; }
+extern "C" __declspec(dllexport) int printf(const char* a, ...) { return p_printf_fn_ptr ? p_printf_fn_ptr(a) : 0; }
+extern "C" __declspec(dllexport) int scanf(const char* a, ...) { return p_scanf_fn_ptr ? p_scanf_fn_ptr(a) : 0; }
+extern "C" __declspec(dllexport) int snprintf(char* a, size_t b, const char* c, ...) { return p_snprintf_fn_ptr ? p_snprintf_fn_ptr(a, b, c) : 0; }
+extern "C" __declspec(dllexport) int sprintf(char* a, const char* b, ...) { return p_sprintf_fn_ptr ? p_sprintf_fn_ptr(a, b) : 0; }
+extern "C" __declspec(dllexport) int sscanf(const char* a, const char* b, ...) { return p_sscanf_fn_ptr ? p_sscanf_fn_ptr(a, b) : 0; }

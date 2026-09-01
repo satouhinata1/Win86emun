@@ -1,0 +1,11 @@
+LIBRARY api-ms-win-crt-heap-l1-1-0
+EXPORTS
+    malloc
+    free
+    calloc
+    realloc
+    _msize
+    _set_new_mode
+    _callnewh
+    _query_new_mode
+    _get_heap_handle
