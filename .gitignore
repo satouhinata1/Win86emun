@@ -73,3 +73,4 @@ htmlcov/
 *.tar.xz
 *.tar.zst
 ```.next/
+.next/
