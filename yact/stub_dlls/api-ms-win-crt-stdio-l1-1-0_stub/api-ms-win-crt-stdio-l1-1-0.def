@@ -1,66 +1,63 @@
 LIBRARY api-ms-win-crt-stdio-l1-1-0
 EXPORTS
-    __p___iob_func = msvcrt.__p___iob_func
-    _fcloseall = msvcrt._fcloseall
-    _fdopen = msvcrt._fdopen
-    _fgetchar = msvcrt._fgetchar
-    _fgetwchar = msvcrt._fgetwchar
-    _fileno = msvcrt._fileno
-    _flushall = msvcrt._flushall
-    _fputchar = msvcrt._fputchar
-    _fputwchar = msvcrt._fputwchar
-    _fseeki64 = msvcrt._fseeki64
-    _ftelli64 = msvcrt._ftelli64
-    _getw = msvcrt._getw
-    _putw = msvcrt._putw
-    _ungetch = msvcrt._ungetch
-    _ungetwch = msvcrt._ungetwch
-    clearerr = msvcrt.clearerr
-    fclose = msvcrt.fclose
-    feof = msvcrt.feof
-    ferror = msvcrt.ferror
-    fflush = msvcrt.fflush
-    fgetc = msvcrt.fgetc
-    fgetpos = msvcrt.fgetpos
-    fgets = msvcrt.fgets
-    fopen = msvcrt.fopen
-    fprintf = msvcrt.fprintf
-    fputc = msvcrt.fputc
-    fputs = msvcrt.fputs
-    fread = msvcrt.fread
-    freopen = msvcrt.freopen
-    fscanf = msvcrt.fscanf
-    fseek = msvcrt.fseek
-    fsetpos = msvcrt.fsetpos
-    ftell = msvcrt.ftell
-    fwrite = msvcrt.fwrite
-    getc = msvcrt.getc
-    getchar = msvcrt.getchar
-    gets = msvcrt.gets
-    perror = msvcrt.perror
-    printf = msvcrt.printf
-    putc = msvcrt.putc
-    putchar = msvcrt.putchar
-    puts = msvcrt.puts
-    remove = msvcrt.remove
-    rename = msvcrt.rename
-    rewind = msvcrt.rewind
-    scanf = msvcrt.scanf
-    setbuf = msvcrt.setbuf
-    setvbuf = msvcrt.setvbuf
-    snprintf = msvcrt.snprintf
-    sprintf = msvcrt.sprintf
-    sscanf = msvcrt.sscanf
-    tmpfile = msvcrt.tmpfile
-    tmpnam = msvcrt.tmpnam
-    ungetc = msvcrt.ungetc
-    vfprintf = msvcrt.vfprintf
-    vfscanf = msvcrt.vfscanf
-    vprintf = msvcrt.vprintf
-    vscanf = msvcrt.vscanf
-    vsnprintf = msvcrt.vsnprintf
-    vsprintf = msvcrt.vsprintf
-    vsscanf = msvcrt.vsscanf
-    __acrt_iob_func = msvcrt.__acrt_iob_func
-    __stdio_common_vfprintf = msvcrt.__stdio_common_vfprintf
-    __stdio_common_vfwprintf = msvcrt.__stdio_common_vfwprintf
+    __acrt_iob_func = my_acrt_iob_func
+    _fcloseall
+    _fdopen
+    _fgetchar
+    _fgetwchar
+    _fileno
+    _flushall
+    _fputchar
+    _fputwchar
+    _fseeki64
+    _ftelli64
+    _getw
+    _putw
+    _ungetch
+    _ungetwch
+    clearerr
+    fclose
+    feof
+    ferror
+    fflush
+    fgetc
+    fgetpos
+    fgets
+    fopen
+    fprintf
+    fputc
+    fputs
+    fread
+    freopen
+    fscanf
+    fseek
+    fsetpos
+    ftell
+    fwrite
+    getc
+    getchar
+    gets
+    perror
+    printf
+    putc
+    putchar
+    puts
+    remove
+    rename
+    rewind
+    scanf
+    setbuf
+    setvbuf
+    snprintf
+    sprintf
+    sscanf
+    tmpfile
+    tmpnam
+    ungetc
+    vfprintf
+    vfscanf
+    vprintf
+    vscanf
+    vsnprintf
+    vsprintf
+    vsscanf

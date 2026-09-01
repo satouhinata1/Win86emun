@@ -1,33 +1,32 @@
 LIBRARY api-ms-win-crt-runtime-l1-1-0
 EXPORTS
-    __p___argc = msvcrt.__p___argc
-    __p___argv = msvcrt.__p___argv
-    __p___wargv = msvcrt.__p___wargv
-    __p___winitenv = msvcrt.__p___winitenv
-    __p___initenv = msvcrt.__p___initenv
-    __p___mb_cur_max = msvcrt.__p___mb_cur_max
-    __p___pgmptr = msvcrt.__p___pgmptr
-    __p___wpgmptr = msvcrt.__p___wpgmptr
-    _configthreadlocale = msvcrt._configthreadlocale
-    _configure_narrow_argv = msvcrt._configure_narrow_argv
-    _configure_wide_argv = msvcrt._configure_wide_argv
-    _crt_atexit = msvcrt._crt_atexit
-    _crt_at_quick_exit = msvcrt._crt_at_quick_exit
-    _errno = msvcrt._errno
-    _execute_onexit_table = msvcrt._execute_onexit_table
-    _exit = msvcrt._exit
-    _get_doserrno = msvcrt._get_doserrno
-    _get_errno = msvcrt._get_errno
-    _initialize_narrow_environment = msvcrt._initialize_narrow_environment
-    _initialize_onexit_table = msvcrt._initialize_onexit_table
-    _initialize_wide_environment = msvcrt._initialize_wide_environment
-    _initterm = msvcrt._initterm
-    _initterm_e = msvcrt._initterm_e
-    _pctype = msvcrt._pctype
-    _register_onexit_function = msvcrt._register_onexit_function
-    _set_doserrno = msvcrt._set_doserrno
-    _set_errno = msvcrt._set_errno
-    abort = msvcrt.abort
-    atexit = msvcrt.atexit
-    exit = msvcrt.exit
-    quick_exit = msvcrt.quick_exit
+    __p___argc
+    __p___argv
+    __p___wargv
+    __p___winitenv
+    __p___initenv
+    __p___mb_cur_max
+    __p___pgmptr
+    __p___wpgmptr
+    _configthreadlocale
+    _configure_narrow_argv
+    _configure_wide_argv
+    _crt_atexit
+    _crt_at_quick_exit
+    _errno
+    _execute_onexit_table
+    _exit
+    _get_doserrno
+    _get_errno
+    _initialize_narrow_environment
+    _initialize_onexit_table
+    _initialize_wide_environment
+    _initterm
+    _initterm_e
+    _register_onexit_function
+    _set_doserrno
+    _set_errno
+    abort = my_abort
+    atexit = my_atexit
+    exit = my_exit
+    quick_exit

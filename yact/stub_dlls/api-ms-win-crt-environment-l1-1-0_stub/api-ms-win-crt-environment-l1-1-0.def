@@ -1,0 +1,13 @@
+LIBRARY api-ms-win-crt-environment-l1-1-0
+EXPORTS
+    _dupenv_s = msvcrt._dupenv_s
+    _wdupenv_s = msvcrt._wdupenv_s
+    getenv = msvcrt.getenv
+    putenv = msvcrt.putenv
+    wgetenv = msvcrt.wgetenv
+    _putenv = msvcrt._putenv
+    _wputenv = msvcrt._wputenv
+    _searchenv = msvcrt._searchenv
+    _wsearchenv = msvcrt._wsearchenv
+    _dupenv_s_dbg = msvcrt._dupenv_s_dbg
+    _wdupenv_s_dbg = msvcrt._wdupenv_s_dbg

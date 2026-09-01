@@ -1,28 +1,38 @@
 ```
-# Windows DLL files
+# Build artifacts and binaries
 *.dll
-
-# Build artifacts
+*.exe
+*.obj
+*.o
+*.out
 release/
-x86node_package/
-yact/stub_dlls/
 
-# Dependencies
-node_modules/
+# Dependencies and temporary directories
+yact/stub_dlls/*/build/
+yact/stub_dlls/*/_build/
+yact/stub_dlls/*/dist/
+yact/stub_dlls/*/_dist/
 
-# Logs and temp files
-*.log
+# Temporary files
 *.tmp
+*.temp
+*.log
 
-# Environment
+# Environment files
 .env
 .env.local
 *.env.*
 
-# Editors
+# Editors and IDE
 .vscode/
 .idea/
-```.next/
+*.swp
+*.swo
+
+# OS specific
+.DS_Store
+Thumbs.db
+```node_modules/
+.next/
 dist/
 build/
-.next/
