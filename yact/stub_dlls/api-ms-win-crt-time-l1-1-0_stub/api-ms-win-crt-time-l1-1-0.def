@@ -1,0 +1,8 @@
+LIBRARY api-ms-win-crt-time-l1-1-0
+EXPORTS
+    _timezone DATA
+    __timezone = _timezone
+    _daylight DATA
+    __daylight = _daylight
+    _tzname DATA
+    __tzname = _tzname

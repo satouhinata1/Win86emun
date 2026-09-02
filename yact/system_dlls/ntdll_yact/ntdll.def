@@ -1,0 +1,498 @@
+LIBRARY ntdll.nt
+EXPORTS
+    CsrAllocateCaptureBuffer
+    yact_CsrAllocateCaptureBuffer = CsrAllocateCaptureBuffer
+    CsrAllocateMessagePointer
+    yact_CsrAllocateMessagePointer = CsrAllocateMessagePointer
+    CsrCaptureMessageBuffer
+    yact_CsrCaptureMessageBuffer = CsrCaptureMessageBuffer
+    CsrCaptureMessageString
+    yact_CsrCaptureMessageString = CsrCaptureMessageString
+    CsrCaptureTimeout
+    yact_CsrCaptureTimeout = CsrCaptureTimeout
+    CsrClientCallServer
+    yact_CsrClientCallServer = CsrClientCallServer
+    CsrFreeCaptureBuffer
+    yact_CsrFreeCaptureBuffer = CsrFreeCaptureBuffer
+    CsrIdentifyAlertableThread
+    yact_CsrIdentifyAlertableThread = CsrIdentifyAlertableThread
+    CsrSetPriorityClass
+    yact_CsrSetPriorityClass = CsrSetPriorityClass
+    DbgBreakPoint
+    yact_DbgBreakPoint = DbgBreakPoint
+    DbgPrint
+    yact_DbgPrint = DbgPrint
+    DbgPrintReturnControlC
+    yact_DbgPrintReturnControlC = DbgPrintReturnControlC
+    DbgPrompt
+    yact_DbgPrompt = DbgPrompt
+    DbgUiConnectToDbg
+    yact_DbgUiConnectToDbg = DbgUiConnectToDbg
+    DbgUiContinue
+    yact_DbgUiContinue = DbgUiContinue
+    DbgUiWaitStateChange
+    yact_DbgUiWaitStateChange = DbgUiWaitStateChange
+    DbgUserBreakPoint
+    yact_DbgUserBreakPoint = DbgUserBreakPoint
+    LdrAccessResource
+    yact_LdrAccessResource = LdrAccessResource
+    LdrDisableThreadCalloutsForDll
+    yact_LdrDisableThreadCalloutsForDll = LdrDisableThreadCalloutsForDll
+    LdrEnumResources
+    yact_LdrEnumResources = LdrEnumResources
+    LdrFindEntryForAddress
+    yact_LdrFindEntryForAddress = LdrFindEntryForAddress
+    LdrFindResourceDirectory_U
+    yact_LdrFindResourceDirectory_U = LdrFindResourceDirectory_U
+    LdrFindResource_U
+    yact_LdrFindResource_U = LdrFindResource_U
+    LdrFlushAlternateResourceModules
+    yact_LdrFlushAlternateResourceModules = LdrFlushAlternateResourceModules
+    LdrGetDllHandle
+    yact_LdrGetDllHandle = LdrGetDllHandle
+    LdrGetProcedureAddress
+    yact_LdrGetProcedureAddress = LdrGetProcedureAddress
+    LdrLoadAlternateResourceModule
+    yact_LdrLoadAlternateResourceModule = LdrLoadAlternateResourceModule
+    LdrLoadDll
+    yact_LdrLoadDll = LdrLoadDll
+    LdrProcessRelocationBlock
+    yact_LdrProcessRelocationBlock = LdrProcessRelocationBlock
+    LdrQueryImageFileExecutionOptions
+    yact_LdrQueryImageFileExecutionOptions = LdrQueryImageFileExecutionOptions
+    LdrQueryProcessModuleInformation
+    yact_LdrQueryProcessModuleInformation = LdrQueryProcessModuleInformation
+    LdrShutdownProcess
+    yact_LdrShutdownProcess = LdrShutdownProcess
+    LdrShutdownThread
+    yact_LdrShutdownThread = LdrShutdownThread
+    LdrUnloadAlternateResourceModule
+    yact_LdrUnloadAlternateResourceModule = LdrUnloadAlternateResourceModule
+    LdrUnloadDll
+    yact_LdrUnloadDll = LdrUnloadDll
+    LdrVerifyImageMatchesChecksum
+    yact_LdrVerifyImageMatchesChecksum = LdrVerifyImageMatchesChecksum
+    NtAcceptConnectPort
+    yact_NtAcceptConnectPort = NtAcceptConnectPort
+    NtAccessCheck
+    yact_NtAccessCheck = NtAccessCheck
+    NtAccessCheckAndAuditAlarm
+    yact_NtAccessCheckAndAuditAlarm = NtAccessCheckAndAuditAlarm
+    NtAccessCheckByType
+    yact_NtAccessCheckByType = NtAccessCheckByType
+    NtAccessCheckByTypeAndAuditAlarm
+    yact_NtAccessCheckByTypeAndAuditAlarm = NtAccessCheckByTypeAndAuditAlarm
+    NtAccessCheckByTypeResultList
+    yact_NtAccessCheckByTypeResultList = NtAccessCheckByTypeResultList
+    NtAccessCheckByTypeResultListAndAuditAlarm
+    yact_NtAccessCheckByTypeResultListAndAuditAlarm = NtAccessCheckByTypeResultListAndAuditAlarm
+    NtAccessCheckByTypeResultListAndAuditAlarmByHandle
+    yact_NtAccessCheckByTypeResultListAndAuditAlarmByHandle = NtAccessCheckByTypeResultListAndAuditAlarmByHandle
+    NtAddAtom
+    yact_NtAddAtom = NtAddAtom
+    NtAdjustGroupsToken
+    yact_NtAdjustGroupsToken = NtAdjustGroupsToken
+    NtAdjustPrivilegesToken
+    yact_NtAdjustPrivilegesToken = NtAdjustPrivilegesToken
+    NtAlertResumeThread
+    yact_NtAlertResumeThread = NtAlertResumeThread
+    NtAlertThread
+    yact_NtAlertThread = NtAlertThread
+    NtAllocateLocallyUniqueId
+    yact_NtAllocateLocallyUniqueId = NtAllocateLocallyUniqueId
+    NtAllocateUserPhysicalPages
+    yact_NtAllocateUserPhysicalPages = NtAllocateUserPhysicalPages
+    NtAllocateUuids
+    yact_NtAllocateUuids = NtAllocateUuids
+    NtAllocateVirtualMemory
+    yact_NtAllocateVirtualMemory = NtAllocateVirtualMemory
+    NtAreMappedFilesTheSame
+    yact_NtAreMappedFilesTheSame = NtAreMappedFilesTheSame
+    NtAssignProcessToJobObject
+    yact_NtAssignProcessToJobObject = NtAssignProcessToJobObject
+    NtCallbackReturn
+    yact_NtCallbackReturn = NtCallbackReturn
+    NtCancelIoFile
+    yact_NtCancelIoFile = NtCancelIoFile
+    NtCancelTimer
+    yact_NtCancelTimer = NtCancelTimer
+    NtClearEvent
+    yact_NtClearEvent = NtClearEvent
+    NtClose
+    yact_NtClose = NtClose
+    NtCloseObjectAuditAlarm
+    yact_NtCloseObjectAuditAlarm = NtCloseObjectAuditAlarm
+    NtCompleteConnectPort
+    yact_NtCompleteConnectPort = NtCompleteConnectPort
+    NtConnectPort
+    yact_NtConnectPort = NtConnectPort
+    NtContinue
+    yact_NtContinue = NtContinue
+    NtCreateDirectoryObject
+    yact_NtCreateDirectoryObject = NtCreateDirectoryObject
+    NtCreateEvent
+    yact_NtCreateEvent = NtCreateEvent
+    NtCreateEventPair
+    yact_NtCreateEventPair = NtCreateEventPair
+    NtCreateFile
+    yact_NtCreateFile = NtCreateFile
+    NtCreateIoCompletion
+    yact_NtCreateIoCompletion = NtCreateIoCompletion
+    NtCreateJobObject
+    yact_NtCreateJobObject = NtCreateJobObject
+    NtCreateKey
+    yact_NtCreateKey = NtCreateKey
+    NtCreateMailslotFile
+    yact_NtCreateMailslotFile = NtCreateMailslotFile
+    NtCreateMutant
+    yact_NtCreateMutant = NtCreateMutant
+    NtCreateNamedPipeFile
+    yact_NtCreateNamedPipeFile = NtCreateNamedPipeFile
+    NtCreatePagingFile
+    yact_NtCreatePagingFile = NtCreatePagingFile
+    NtCreatePort
+    yact_NtCreatePort = NtCreatePort
+    NtCreateProcess
+    yact_NtCreateProcess = NtCreateProcess
+    NtCreateProfile
+    yact_NtCreateProfile = NtCreateProfile
+    NtCreateSection
+    yact_NtCreateSection = NtCreateSection
+    NtCreateSemaphore
+    yact_NtCreateSemaphore = NtCreateSemaphore
+    NtCreateSymbolicLinkObject
+    yact_NtCreateSymbolicLinkObject = NtCreateSymbolicLinkObject
+    NtCreateThread
+    yact_NtCreateThread = NtCreateThread
+    NtCreateTimer
+    yact_NtCreateTimer = NtCreateTimer
+    NtCreateToken
+    yact_NtCreateToken = NtCreateToken
+    NtCreateWaitablePort
+    yact_NtCreateWaitablePort = NtCreateWaitablePort
+    NtDelayExecution
+    yact_NtDelayExecution = NtDelayExecution
+    NtDeleteAtom
+    yact_NtDeleteAtom = NtDeleteAtom
+    NtDeleteFile
+    yact_NtDeleteFile = NtDeleteFile
+    NtDeleteKey
+    yact_NtDeleteKey = NtDeleteKey
+    NtDeleteObjectAuditAlarm
+    yact_NtDeleteObjectAuditAlarm = NtDeleteObjectAuditAlarm
+    NtDeleteValueKey
+    yact_NtDeleteValueKey = NtDeleteValueKey
+    NtDeviceIoControlFile
+    yact_NtDeviceIoControlFile = NtDeviceIoControlFile
+    NtDisconnectPort
+    yact_NtDisconnectPort = NtDisconnectPort
+    NtDuplicateObject
+    yact_NtDuplicateObject = NtDuplicateObject
+    NtDuplicateToken
+    yact_NtDuplicateToken = NtDuplicateToken
+    NtEnumerateKey
+    yact_NtEnumerateKey = NtEnumerateKey
+    NtEnumerateValueKey
+    yact_NtEnumerateValueKey = NtEnumerateValueKey
+    NtExtendSection
+    yact_NtExtendSection = NtExtendSection
+    NtFlushBuffersFile
+    yact_NtFlushBuffersFile = NtFlushBuffersFile
+    NtFlushInstructionCache
+    yact_NtFlushInstructionCache = NtFlushInstructionCache
+    NtFlushVirtualMemory
+    yact_NtFlushVirtualMemory = NtFlushVirtualMemory
+    NtFsControlFile
+    yact_NtFsControlFile = NtFsControlFile
+    NtGetContextThread
+    yact_NtGetContextThread = NtGetContextThread
+    NtPlugPlayControl
+    yact_NtPlugPlayControl = NtPlugPlayControl
+    NtQueryAttributesFile
+    yact_NtQueryAttributesFile = NtQueryAttributesFile
+    NtQueryDefaultLocale
+    yact_NtQueryDefaultLocale = NtQueryDefaultLocale
+    NtQueryDirectoryFile
+    yact_NtQueryDirectoryFile = NtQueryDirectoryFile
+    NtQueryDirectoryObject
+    yact_NtQueryDirectoryObject = NtQueryDirectoryObject
+    NtQueryEvent
+    yact_NtQueryEvent = NtQueryEvent
+    NtQueryFullAttributesFile
+    yact_NtQueryFullAttributesFile = NtQueryFullAttributesFile
+    NtQueryInformationFile
+    yact_NtQueryInformationFile = NtQueryInformationFile
+    NtQueryInformationJobObject
+    yact_NtQueryInformationJobObject = NtQueryInformationJobObject
+    NtQueryInformationProcess
+    yact_NtQueryInformationProcess = NtQueryInformationProcess
+    NtQueryInformationThread
+    yact_NtQueryInformationThread = NtQueryInformationThread
+    NtQueryInformationToken
+    yact_NtQueryInformationToken = NtQueryInformationToken
+    NtQueryIntervalProfile
+    yact_NtQueryIntervalProfile = NtQueryIntervalProfile
+    NtQueryIoCompletion
+    yact_NtQueryIoCompletion = NtQueryIoCompletion
+    NtQueryKey
+    yact_NtQueryKey = NtQueryKey
+    NtQueryMultipleValueKey
+    yact_NtQueryMultipleValueKey = NtQueryMultipleValueKey
+    NtQueryMutant
+    yact_NtQueryMutant = NtQueryMutant
+    NtQueryObject
+    yact_NtQueryObject = NtQueryObject
+    NtQueryPerformanceCounter
+    yact_NtQueryPerformanceCounter = NtQueryPerformanceCounter
+    NtQueryPortInformationProcess
+    yact_NtQueryPortInformationProcess = NtQueryPortInformationProcess
+    NtQuerySection
+    yact_NtQuerySection = NtQuerySection
+    NtQuerySemaphore
+    yact_NtQuerySemaphore = NtQuerySemaphore
+    NtQuerySymbolicLinkObject
+    yact_NtQuerySymbolicLinkObject = NtQuerySymbolicLinkObject
+    NtQuerySystemEnvironmentValue
+    yact_NtQuerySystemEnvironmentValue = NtQuerySystemEnvironmentValue
+    NtQuerySystemInformation
+    yact_NtQuerySystemInformation = NtQuerySystemInformation
+    NtQueryTimer
+    yact_NtQueryTimer = NtQueryTimer
+    NtQueryTimerResolution
+    yact_NtQueryTimerResolution = NtQueryTimerResolution
+    NtQueryValueKey
+    yact_NtQueryValueKey = NtQueryValueKey
+    NtQueryVolumeInformationFile
+    yact_NtQueryVolumeInformationFile = NtQueryVolumeInformationFile
+    NtQueueApcThread
+    yact_NtQueueApcThread = NtQueueApcThread
+    NtRaiseException
+    yact_NtRaiseException = NtRaiseException
+    NtReadFile
+    yact_NtReadFile = NtReadFile
+    NtReadFileScatter
+    yact_NtReadFileScatter = NtReadFileScatter
+    NtReadRequestPort
+    yact_NtReadRequestPort = NtReadRequestPort
+    NtReadVirtualMemory
+    yact_NtReadVirtualMemory = NtReadVirtualMemory
+    NtRegisterThreadTerminatePort
+    yact_NtRegisterThreadTerminatePort = NtRegisterThreadTerminatePort
+    NtReleaseMutant
+    yact_NtReleaseMutant = NtReleaseMutant
+    NtReleaseSemaphore
+    yact_NtReleaseSemaphore = NtReleaseSemaphore
+    NtRemoveIoCompletion
+    yact_NtRemoveIoCompletion = NtRemoveIoCompletion
+    NtRemoveProcessDebug
+    yact_NtRemoveProcessDebug = NtRemoveProcessDebug
+    NtRenameKey
+    yact_NtRenameKey = NtRenameKey
+    NtReplaceKey
+    yact_NtReplaceKey = NtReplaceKey
+    NtReplyPort
+    yact_NtReplyPort = NtReplyPort
+    NtReplyWaitReceivePort
+    yact_NtReplyWaitReceivePort = NtReplyWaitReceivePort
+    NtReplyWaitReceivePortEx
+    yact_NtReplyWaitReceivePortEx = NtReplyWaitReceivePortEx
+    NtReplyWaitReplyPort
+    yact_NtReplyWaitReplyPort = NtReplyWaitReplyPort
+    NtRequestPort
+    yact_NtRequestPort = NtRequestPort
+    NtRequestWaitReplyPort
+    yact_NtRequestWaitReplyPort = NtRequestWaitReplyPort
+    NtResetEvent
+    yact_NtResetEvent = NtResetEvent
+    NtResumeProcess
+    yact_NtResumeProcess = NtResumeProcess
+    NtResumeThread
+    yact_NtResumeThread = NtResumeThread
+    NtSaveKey
+    yact_NtSaveKey = NtSaveKey
+    NtSecureConnectPort
+    yact_NtSecureConnectPort = NtSecureConnectPort
+    NtSetContextThread
+    yact_NtSetContextThread = NtSetContextThread
+    NtSetDefaultLocale
+    yact_NtSetDefaultLocale = NtSetDefaultLocale
+    NtSetEvent
+    yact_NtSetEvent = NtSetEvent
+    NtSetEventBoostPriority
+    yact_NtSetEventBoostPriority = NtSetEventBoostPriority
+    NtSetInformationDebugObject
+    yact_NtSetInformationDebugObject = NtSetInformationDebugObject
+    NtSetInformationFile
+    yact_NtSetInformationFile = NtSetInformationFile
+    NtSetInformationJobObject
+    yact_NtSetInformationJobObject = NtSetInformationJobObject
+    NtSetInformationKey
+    yact_NtSetInformationKey = NtSetInformationKey
+    NtSetInformationObject
+    yact_NtSetInformationObject = NtSetInformationObject
+    NtSetInformationProcess
+    yact_NtSetInformationProcess = NtSetInformationProcess
+    NtSetInformationThread
+    yact_NtSetInformationThread = NtSetInformationThread
+    NtSetInformationToken
+    yact_NtSetInformationToken = NtSetInformationToken
+    NtSetIntervalProfile
+    yact_NtSetIntervalProfile = NtSetIntervalProfile
+    NtSetIoCompletion
+    yact_NtSetIoCompletion = NtSetIoCompletion
+    NtSetLdtEntries
+    yact_NtSetLdtEntries = NtSetLdtEntries
+    NtSetSecurityObject
+    yact_NtSetSecurityObject = NtSetSecurityObject
+    NtSetSystemEnvironmentValue
+    yact_NtSetSystemEnvironmentValue = NtSetSystemEnvironmentValue
+    NtSetSystemInformation
+    yact_NtSetSystemInformation = NtSetSystemInformation
+    NtSetSystemTime
+    yact_NtSetSystemTime = NtSetSystemTime
+    NtSetTimer
+    yact_NtSetTimer = NtSetTimer
+    NtSetTimerResolution
+    yact_NtSetTimerResolution = NtSetTimerResolution
+    NtSetValueKey
+    yact_NtSetValueKey = NtSetValueKey
+    NtSetVolumeInformationFile
+    yact_NtSetVolumeInformationFile = NtSetVolumeInformationFile
+    NtShutdownSystem
+    yact_NtShutdownSystem = NtShutdownSystem
+    NtSignalAndWaitForSingleObject
+    yact_NtSignalAndWaitForSingleObject = NtSignalAndWaitForSingleObject
+    NtStartProfile
+    yact_NtStartProfile = NtStartProfile
+    NtStopProfile
+    yact_NtStopProfile = NtStopProfile
+    NtSuspendProcess
+    yact_NtSuspendProcess = NtSuspendProcess
+    NtSuspendThread
+    yact_NtSuspendThread = NtSuspendThread
+    NtSystemDebugControl
+    yact_NtSystemDebugControl = NtSystemDebugControl
+    NtTerminateJobObject
+    yact_NtTerminateJobObject = NtTerminateJobObject
+    NtTerminateProcess
+    yact_NtTerminateProcess = NtTerminateProcess
+    NtTerminateThread
+    yact_NtTerminateThread = NtTerminateThread
+    NtTestAlert
+    yact_NtTestAlert = NtTestAlert
+    NtTraceEvent
+    yact_NtTraceEvent = NtTraceEvent
+    NtTranslateFilePath
+    yact_NtTranslateFilePath = NtTranslateFilePath
+    NtUnloadDriver
+    yact_NtUnloadDriver = NtUnloadDriver
+    NtUnloadKey
+    yact_NtUnloadKey = NtUnloadKey
+    NtUnlockFile
+    yact_NtUnlockFile = NtUnlockFile
+    NtUnlockVirtualMemory
+    yact_NtUnlockVirtualMemory = NtUnlockVirtualMemory
+    NtUnmapViewOfSection
+    yact_NtUnmapViewOfSection = NtUnmapViewOfSection
+    NtVdmControl
+    yact_NtVdmControl = NtVdmControl
+    NtWaitForDebugEvent
+    yact_NtWaitForDebugEvent = NtWaitForDebugEvent
+    NtWaitForMultipleObjects
+    yact_NtWaitForMultipleObjects = NtWaitForMultipleObjects
+    NtWaitForSingleObject
+    yact_NtWaitForSingleObject = NtWaitForSingleObject
+    NtWaitForWorkViaWorkerFactory
+    yact_NtWaitForWorkViaWorkerFactory = NtWaitForWorkViaWorkerFactory
+    NtWriteFile
+    yact_NtWriteFile = NtWriteFile
+    NtWriteFileGather
+    yact_NtWriteFileGather = NtWriteFileGather
+    NtWriteRequestPort
+    yact_NtWriteRequestPort = NtWriteRequestPort
+    NtWriteVirtualMemory
+    yact_NtWriteVirtualMemory = NtWriteVirtualMemory
+    NtYieldExecution
+    yact_NtYieldExecution = NtYieldExecution
+    RtlAllocateHeap
+    yact_RtlAllocateHeap = RtlAllocateHeap
+    RtlAnsiStringToUnicodeString
+    yact_RtlAnsiStringToUnicodeString = RtlAnsiStringToUnicodeString
+    RtlCaptureContext
+    yact_RtlCaptureContext = RtlCaptureContext
+    RtlCharToInteger
+    yact_RtlCharToInteger = RtlCharToInteger
+    RtlCompareMemory
+    yact_RtlCompareMemory = RtlCompareMemory
+    RtlConvertSidToUnicodeString
+    yact_RtlConvertSidToUnicodeString = RtlConvertSidToUnicodeString
+    RtlConvertUiListToApiList
+    yact_RtlConvertUiListToApiList = RtlConvertUiListToApiList
+    RtlCreateHeap
+    yact_RtlCreateHeap = RtlCreateHeap
+    RtlCreateUnicodeString
+    yact_RtlCreateUnicodeString = RtlCreateUnicodeString
+    RtlCreateUnicodeStringFromAsciiz
+    yact_RtlCreateUnicodeStringFromAsciiz = RtlCreateUnicodeStringFromAsciiz
+    RtlDestroyHeap
+    yact_RtlDestroyHeap = RtlDestroyHeap
+    RtlDosPathNameToNtPathName_U
+    yact_RtlDosPathNameToNtPathName_U = RtlDosPathNameToNtPathName_U
+    RtlEqualUnicodeString
+    yact_RtlEqualUnicodeString = RtlEqualUnicodeString
+    RtlExitUserThread
+    yact_RtlExitUserThread = RtlExitUserThread
+    RtlExpandEnvironmentStrings_U
+    yact_RtlExpandEnvironmentStrings_U = RtlExpandEnvironmentStrings_U
+    RtlExtendedIntegerMultiply
+    yact_RtlExtendedIntegerMultiply = RtlExtendedIntegerMultiply
+    RtlFreeAnsiString
+    yact_RtlFreeAnsiString = RtlFreeAnsiString
+    RtlFreeHeap
+    yact_RtlFreeHeap = RtlFreeHeap
+    RtlFreeUnicodeString
+    yact_RtlFreeUnicodeString = RtlFreeUnicodeString
+    RtlGetCompressionWorkSpaceSize
+    yact_RtlGetCompressionWorkSpaceSize = RtlGetCompressionWorkSpaceSize
+    RtlGetLastNtStatus
+    yact_RtlGetLastNtStatus = RtlGetLastNtStatus
+    RtlGetLongestNtPathLength
+    yact_RtlGetLongestNtPathLength = RtlGetLongestNtPathLength
+    RtlInitializeBitMap
+    yact_RtlInitializeBitMap = RtlInitializeBitMap
+    RtlInitializeExceptionLog
+    yact_RtlInitializeExceptionLog = RtlInitializeExceptionLog
+    RtlLargeIntegerDivide
+    yact_RtlLargeIntegerDivide = RtlLargeIntegerDivide
+    RtlMoveMemory
+    yact_RtlMoveMemory = RtlMoveMemory
+    RtlNtStatusToDosError
+    yact_RtlNtStatusToDosError = RtlNtStatusToDosError
+    RtlpNtOpenKey
+    yact_RtlpNtOpenKey = RtlpNtOpenKey
+    RtlQueryHeapInformation
+    yact_RtlQueryHeapInformation = RtlQueryHeapInformation
+    RtlRaiseException
+    yact_RtlRaiseException = RtlRaiseException
+    RtlRaiseStatus
+    yact_RtlRaiseStatus = RtlRaiseStatus
+    RtlRestoreContext
+    yact_RtlRestoreContext = RtlRestoreContext
+    RtlSetBits
+    yact_RtlSetBits = RtlSetBits
+    RtlSetLastWin32Error
+    yact_RtlSetLastWin32Error = RtlSetLastWin32Error
+    RtlUnhandledExceptionFilter
+    yact_RtlUnhandledExceptionFilter = RtlUnhandledExceptionFilter
+    RtlUnicodeStringToAnsiString
+    yact_RtlUnicodeStringToAnsiString = RtlUnicodeStringToAnsiString
+    RtlUnicodeToMultiByteSize
+    yact_RtlUnicodeToMultiByteSize = RtlUnicodeToMultiByteSize
+    RtlUnwind
+    yact_RtlUnwind = RtlUnwind
+    RtlZeroMemory
+    yact_RtlZeroMemory = RtlZeroMemory
+    vDbgPrintEx
+    yact_vDbgPrintEx = vDbgPrintEx
+    vDbgPrintExWithPrefix
+    yact_vDbgPrintExWithPrefix = vDbgPrintExWithPrefix
