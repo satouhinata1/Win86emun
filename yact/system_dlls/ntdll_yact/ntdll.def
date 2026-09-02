@@ -468,6 +468,8 @@ EXPORTS
     yact_RtlMoveMemory = RtlMoveMemory
     RtlNtStatusToDosError
     yact_RtlNtStatusToDosError = RtlNtStatusToDosError
+    NtOpenKey
+    yact_NtOpenKey = NtOpenKey
     RtlpNtOpenKey
     yact_RtlpNtOpenKey = RtlpNtOpenKey
     RtlQueryHeapInformation
